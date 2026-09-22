@@ -10,27 +10,23 @@ dotenv.config();
 
 const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/flipped_classroom';
 
-const seedDatabase = async () => {
+export const seedData = async (forceClear = false): Promise<void> => {
   try {
-    console.log('[Seeder] Connecting to MongoDB...');
-    try {
-      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 3000 });
-    } catch (connErr) {
-      console.warn('[Seeder] Local MongoDB not detected, starting in-memory MongoDB...');
-      const { MongoMemoryServer } = await import('mongodb-memory-server');
-      const mongod = await MongoMemoryServer.create();
-      await mongoose.connect(mongod.getUri());
+    const userCount = await User.countDocuments();
+    if (!forceClear && userCount > 0) {
+      console.log(`[Seeder] Database already populated with ${userCount} users. Auto-seed skipped.`);
+      return;
     }
-    console.log('[Seeder] Connected to MongoDB');
 
-    // Clear existing collections
-    console.log('[Seeder] Clearing old collections...');
-    await User.deleteMany({});
-    await Category.deleteMany({});
-    await StudyMaterial.deleteMany({});
+    if (forceClear) {
+      console.log('[Seeder] Clearing old collections...');
+      await User.deleteMany({});
+      await Category.deleteMany({});
+      await StudyMaterial.deleteMany({});
+    }
 
     // 1. Seed Users
-    console.log('[Seeder] Creating users...');
+    console.log('[Seeder] Creating sample users...');
     const salt = await bcrypt.genSalt(10);
     const passwordHash = await bcrypt.hash('123456', salt);
 
@@ -260,20 +256,33 @@ const seedDatabase = async () => {
 
     await StudyMaterial.insertMany(materialsData);
     console.log('[Seeder] Created 3 high-quality study materials with multi-format blocks');
-
-    console.log('\n[Seeder] --- SEED COMPLETED SUCCESSFULLY ---');
-    console.log('Sample Accounts for Login:');
-    console.log('1. Admin:   admin@flippedclassroom.edu.vn / 123456');
-    console.log('2. Teacher: thaynam.toan@flippedclassroom.edu.vn / 123456');
-    console.log('3. Teacher: colien.ly@flippedclassroom.edu.vn / 123456');
-    console.log('4. Student: hocsinh@flippedclassroom.edu.vn / 123456');
-
-    await mongoose.disconnect();
-    process.exit(0);
+    console.log('[Seeder] --- SEED COMPLETED SUCCESSFULLY ---');
   } catch (error) {
     console.error('[Seeder] Seed failed:', error);
-    process.exit(1);
+    throw error;
   }
 };
 
-seedDatabase();
+// If run directly from CLI
+if (require.main === module) {
+  (async () => {
+    try {
+      console.log('[Seeder CLI] Connecting to MongoDB...');
+      try {
+        await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 3000 });
+      } catch (connErr) {
+        console.warn('[Seeder CLI] Local MongoDB not detected, starting in-memory MongoDB...');
+        const { MongoMemoryServer } = await import('mongodb-memory-server');
+        const mongod = await MongoMemoryServer.create();
+        await mongoose.connect(mongod.getUri());
+      }
+      console.log('[Seeder CLI] Connected');
+      await seedData(true);
+      await mongoose.disconnect();
+      process.exit(0);
+    } catch (err) {
+      console.error('[Seeder CLI] Error:', err);
+      process.exit(1);
+    }
+  })();
+}

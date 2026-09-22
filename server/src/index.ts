@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import { connectDB } from './config/db';
+import { seedData } from './seeder';
 import { errorHandler } from './middlewares/errorHandler';
 
 import authRoutes from './routes/authRoutes';
@@ -16,9 +17,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3000';
-
-// Connect to MongoDB
-connectDB();
 
 // Middlewares
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
@@ -45,8 +43,21 @@ app.use('/api/admin', adminRoutes);
 // Error Handling
 app.use(errorHandler);
 
-app.listen(PORT, () => {
-  console.log(`[Server] Flipped Classroom Backend running on http://localhost:${PORT}`);
-});
+const startServer = async () => {
+  try {
+    // Connect to database
+    await connectDB();
+    // Auto-seed default accounts, categories & study materials if database is empty
+    await seedData(false);
+
+    app.listen(PORT, () => {
+      console.log(`[Server] Flipped Classroom Backend running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error('[Server] Startup error:', err);
+  }
+};
+
+startServer();
 
 export default app;
