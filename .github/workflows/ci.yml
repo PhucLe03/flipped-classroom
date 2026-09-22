@@ -115,14 +115,6 @@ jobs:
           cache: 'npm'
           cache-dependency-path: client/package-lock.json
 
-      - name: Setup GitHub Pages Environment
-        id: pages
-        uses: actions/configure-pages@v5
-        continue-on-error: true
-        with:
-          enablement: true
-          static_site_generator: next
-
       - name: Install Frontend Dependencies
         working-directory: ./client
         run: npm ci
@@ -131,7 +123,7 @@ jobs:
         working-directory: ./client
         env:
           GITHUB_PAGES: 'true'
-          NEXT_PUBLIC_BASE_PATH: ${{ steps.pages.outputs.base_path || '/flipped-classroom' }}
+          NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH || '/flipped-classroom' }}
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
         run: npm run build
 
@@ -143,3 +135,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
