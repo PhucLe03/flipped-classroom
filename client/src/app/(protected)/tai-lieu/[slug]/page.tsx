@@ -1,11 +1,11 @@
 import MaterialDetailClient from './MaterialDetailClient';
 
 const FALLBACK_SLUGS = [
-  'gioi-thieu-ve-giai-tich-va-ban-chat-cua-dao-ham',
-  'khao-sat-dao-dong-dieu-hoa-va-con-lac-lo-xo',
-  'chuyen-de-cau-dieu-kien-toan-dien',
-  'y-nghia-hinh-hoc-va-vat-ly-cua-dao-ham',
-  'phuong-phap-hoc-dao-nguoc-hieu-qua-toan-dien',
+  // 'gioi-thieu-ve-giai-tich-va-ban-chat-cua-dao-ham',
+  // 'khao-sat-dao-dong-dieu-hoa-va-con-lac-lo-xo',
+  // 'chuyen-de-cau-dieu-kien-toan-dien',
+  // 'y-nghia-hinh-hoc-va-vat-ly-cua-dao-ham',
+  // 'phuong-phap-hoc-dao-nguoc-hieu-qua-toan-dien',
   'preview',
 ];
 
