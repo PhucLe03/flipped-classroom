@@ -171,8 +171,8 @@ export const seedData = async (forceClear = false): Promise<void> => {
             type: 'youtube',
             order: 0,
             title: 'Video Thí nghiệm mô phỏng Dao động điều hòa của Con lắc lò xo',
-            youtubeUrl: 'https://www.youtube.com/watch?v=szxM0qVvMbs',
-            youtubeVideoId: extractYouTubeId('https://www.youtube.com/watch?v=szxM0qVvMbs'),
+            youtubeUrl: 'https://www.youtube.com/watch?v=fjxmjPyu6UY',
+            youtubeVideoId: extractYouTubeId('https://www.youtube.com/watch?v=fjxmjPyu6UY'),
           },
           {
             id: 'block_ly_2',

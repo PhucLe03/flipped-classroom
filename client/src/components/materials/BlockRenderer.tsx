@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ContentBlock } from '@/types';
 import { Youtube, ExternalLink, FileText, ChevronDown, ChevronUp, Eye } from 'lucide-react';
+import MovieClip from './MovieClip';
 
 interface BlockRendererProps {
   block: ContentBlock;
@@ -25,17 +26,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, index }) =>
         )}
 
         {block.youtubeVideoId ? (
-          <div className="overflow-hidden rounded-xl border border-slate-100 bg-black shadow-inner">
-            <div className="relative aspect-video w-full">
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${block.youtubeVideoId}?rel=0`}
-                title={block.title || 'Bài giảng video'}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="absolute inset-0 h-full w-full border-0"
-              />
-            </div>
-          </div>
+          <MovieClip videoId={block.youtubeVideoId} title={block.title} />
         ) : (
           <div className="rounded-xl bg-slate-100 p-4 text-center text-xs text-slate-500">
             Không thể tải video YouTube từ đường dẫn đã cung cấp.
