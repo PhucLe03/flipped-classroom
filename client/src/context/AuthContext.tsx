@@ -100,7 +100,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('fc_user');
     setUser(null);
     setToken(null);
-    window.location.href = '/dang-nhap';
+    window.location.href = './dang-nhap';
   };
 
   const refreshProfile = async () => {
