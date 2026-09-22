@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --brand-blue: #006199;
+    --brand-blue-dark: #004c78;
+    --brand-blue-light: #8ACFF8;
+    --brand-yellow: #FFD444;
+    --brand-yellow-light: #F4EB6C;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 antialiased;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  ::selection {
+    background-color: #8ACFF8;
+    color: #004c78;
+  }
+}
+
+/* TipTap Editor & Prose Content Styling */
+.tiptap-content,
+.prose-educational {
+  color: #1e293b;
+  line-height: 1.75;
+}
+
+.tiptap-content h1,
+.prose-educational h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #006199;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.tiptap-content h2,
+.prose-educational h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #006199;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.tiptap-content h3,
+.prose-educational h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.tiptap-content p,
+.prose-educational p {
+  margin-bottom: 0.85rem;
+}
+
+.tiptap-content ul,
+.prose-educational ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.tiptap-content ol,
+.prose-educational ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.tiptap-content blockquote,
+.prose-educational blockquote {
+  border-left: 4px solid #FFD444;
+  background-color: #fffbeb;
+  padding: 0.75rem 1rem;
+  font-style: italic;
+  margin: 1rem 0;
+  border-radius: 0 0.375rem 0.375rem 0;
+}
+
+.tiptap-content code,
+.prose-educational code {
+  background-color: #e2e8f0;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.9em;
+  color: #0f172a;
+}
+
+.tiptap-content hr,
+.prose-educational hr {
+  border: 0;
+  border-top: 1px solid #cbd5e1;
+  margin: 1.5rem 0;
+}
+
+.tiptap-content a,
+.prose-educational a {
+  color: #006199;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.tiptap-content a:hover,
+.prose-educational a:hover {
+  color: #004c78;
+}
+
+/* TipTap Editor active state */
+.tiptap.ProseMirror {
+  min-height: 180px;
+  outline: none;
+  padding: 1rem;
+}
+
+.tiptap.ProseMirror:focus {
+  outline: none;
+}

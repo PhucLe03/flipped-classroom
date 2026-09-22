@@ -1,0 +1,24 @@
+{
+  "name": "flipped-classroom",
+  "version": "1.0.0",
+  "private": true,
+  "description": "E-Learning Flipped Classroom platform with Next.js, Node.js, and MongoDB",
+  "scripts": {
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "build:client": "npm --prefix client run build",
+    "build:server": "npm --prefix server run build",
+    "build": "npm run build:server && npm run build:client",
+    "seed": "npm --prefix server run seed"
+  },
+  "keywords": [
+    "e-learning",
+    "flipped-classroom",
+    "nextjs",
+    "nodejs",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "MIT"
+}
