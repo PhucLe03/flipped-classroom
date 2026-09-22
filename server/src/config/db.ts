@@ -21,6 +21,10 @@ export const connectDB = async (): Promise<void> => {
     console.log(`[MongoDB] Connected successfully to: ${conn.connection.host}/${conn.connection.name}`);
   } catch (error) {
     console.warn(`[MongoDB] MongoDB connection at ${mongoUri} failed: ${(error as Error).message}`);
+    if (process.env.VERCEL) {
+      console.error('[MongoDB] Running on Vercel serverless. MongoMemoryServer fallback is disabled. Please configure MONGODB_URI (e.g. MongoDB Atlas) in Vercel project environment variables.');
+      return;
+    }
     console.log('[MongoDB] Starting in-memory MongoDB instance fallback...');
     try {
       const { MongoMemoryServer } = await import('mongodb-memory-server');
