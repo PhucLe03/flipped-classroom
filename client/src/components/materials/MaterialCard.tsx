@@ -50,74 +50,74 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
         {/* Subject & Grade Badges */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-1.5">
           {subject && (
-            <span className="rounded-full bg-brand-blue/90 backdrop-blur px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm">
+            <span className="rounded-full bg-brand-blue/90 backdrop-blur px-3 py-1 text-xs font-bold text-white shadow-sm">
               {subject.name}
             </span>
           )}
           {material.educationalLevel && material.educationalLevel !== 'Chung' && (
-            <span className="rounded-full bg-amber-500/90 backdrop-blur px-2 py-1 text-[11px] font-bold text-white shadow-sm">
+            <span className="rounded-full bg-amber-500/90 backdrop-blur px-2.5 py-1 text-xs font-bold text-white shadow-sm">
               {material.educationalLevel}
             </span>
           )}
         </div>
 
         {/* Formats Icons Bar */}
-        <div className="absolute bottom-2 right-2 flex items-center gap-1.5 rounded-full bg-black/60 backdrop-blur px-2.5 py-1 text-[11px] text-white">
+        <div className="absolute bottom-2 right-2 flex items-center gap-2 rounded-full bg-black/70 backdrop-blur px-3 py-1 text-xs text-white">
           {hasYouTube && (
-            <span title="Có video bài giảng" className="flex items-center gap-0.5 text-red-400">
-              <Video className="h-3.5 w-3.5" />
+            <span title="Có video bài giảng" className="flex items-center gap-1 text-red-400 font-medium">
+              <Video className="h-4 w-4" />
             </span>
           )}
           {hasGDrive && (
-            <span title="Có tài liệu Google Drive" className="flex items-center gap-0.5 text-amber-300">
-              <FolderOpen className="h-3.5 w-3.5" />
+            <span title="Có tài liệu Google Drive" className="flex items-center gap-1 text-amber-300 font-medium">
+              <FolderOpen className="h-4 w-4" />
             </span>
           )}
           {hasRichText && (
-            <span title="Có bài đọc lý thuyết" className="flex items-center gap-0.5 text-sky-300">
-              <FileText className="h-3.5 w-3.5" />
+            <span title="Có bài đọc lý thuyết" className="flex items-center gap-1 text-sky-300 font-medium">
+              <FileText className="h-4 w-4" />
             </span>
           )}
         </div>
       </div>
 
       {/* Content Info */}
-      <div className="flex flex-1 flex-col p-4 sm:p-5">
-        <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-blue transition-colors line-clamp-2 leading-snug mb-2">
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-blue transition-colors line-clamp-2 leading-snug mb-2.5">
           {material.title}
         </h3>
 
-        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed mb-4 flex-1">
+        <p className="text-sm text-slate-600 line-clamp-2 leading-relaxed mb-4 flex-1">
           {material.description}
         </p>
 
         {/* Author & Stats Footer */}
-        <div className="border-t border-slate-100 pt-3 flex items-center justify-between text-xs text-slate-500">
-          <div className="flex items-center gap-2">
+        <div className="border-t border-slate-100 pt-3.5 flex items-center justify-between text-xs text-slate-500">
+          <div className="flex items-center gap-2.5">
             {author?.avatar ? (
               <img
                 src={author.avatar}
                 alt={author.fullName}
-                className="h-6 w-6 rounded-full object-cover"
+                className="h-7 w-7 rounded-full object-cover"
               />
             ) : (
-              <div className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-blue-light/30 text-brand-blue font-bold text-[10px]">
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-blue-light/30 text-brand-blue font-bold text-xs">
                 {author?.fullName ? author.fullName.charAt(0) : 'G'}
               </div>
             )}
-            <span className="font-medium text-slate-700 truncate max-w-[110px]">
+            <span className="font-semibold text-slate-800 truncate max-w-[130px] text-xs sm:text-sm">
               {author?.fullName || 'Giáo viên'}
             </span>
           </div>
 
-          <div className="flex items-center gap-3 shrink-0">
+          <div className="flex items-center gap-3 shrink-0 text-xs font-medium">
             <span className="flex items-center gap-1" title="Lượt xem">
-              <Eye className="h-3.5 w-3.5 text-slate-400" />
+              <Eye className="h-4 w-4 text-slate-400" />
               {material.viewCount || 0}
             </span>
             {formattedDate && (
               <span className="flex items-center gap-1" title="Ngày đăng">
-                <Clock className="h-3.5 w-3.5 text-slate-400" />
+                <Clock className="h-4 w-4 text-slate-400" />
                 {formattedDate}
               </span>
             )}

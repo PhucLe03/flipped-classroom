@@ -54,17 +54,17 @@ function LoginForm() {
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-blue text-brand-yellow shadow-md mb-3">
             <GraduationCap className="h-7 w-7 stroke-[2.5]" />
           </div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
             Đăng nhập tài khoản
           </h2>
-          <p className="mt-1 text-xs text-slate-500">
+          <p className="mt-2 text-sm text-slate-600">
             Vui lòng đăng nhập để truy cập kho tài liệu học tập
           </p>
         </div>
 
         {/* Error Alert */}
         {errorMessage && (
-          <div className="flex items-center gap-2 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700 border border-red-200 animate-in fade-in">
+          <div className="flex items-center gap-2 rounded-xl bg-red-50 p-3.5 text-sm font-medium text-red-700 border border-red-200 animate-in fade-in">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{errorMessage}</span>
           </div>
@@ -73,35 +73,35 @@ function LoginForm() {
         {/* Form */}
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
               Địa chỉ Email
             </label>
             <div className="relative">
-              <Mail className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+              <Mail className="absolute left-3.5 top-3.5 h-5 w-5 text-slate-400" />
               <input
                 type="email"
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="name@example.com"
-                className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                className="w-full rounded-xl border border-slate-300 py-3 pl-11 pr-4 text-base text-slate-900 placeholder:text-slate-400 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">
+            <label className="block text-sm font-semibold text-slate-700 mb-1.5">
               Mật khẩu
             </label>
             <div className="relative">
-              <Lock className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+              <Lock className="absolute left-3.5 top-3.5 h-5 w-5 text-slate-400" />
               <input
                 type="password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full rounded-xl border border-slate-300 py-2.5 pl-10 pr-3 text-xs text-slate-900 placeholder:text-slate-400 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                className="w-full rounded-xl border border-slate-300 py-3 pl-11 pr-4 text-base text-slate-900 placeholder:text-slate-400 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
               />
             </div>
           </div>
@@ -109,11 +109,11 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-brand-blue py-3 text-xs font-bold text-white shadow-md hover:bg-brand-blue-dark active:scale-[0.99] transition-all disabled:opacity-50"
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-brand-blue py-3.5 text-base font-bold text-white shadow-md hover:bg-brand-blue-dark active:scale-[0.99] transition-all disabled:opacity-50"
           >
             {loading ? (
               <>
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-5 w-5 animate-spin" />
                 <span>Đang xử lý...</span>
               </>
             ) : (
@@ -124,29 +124,29 @@ function LoginForm() {
 
         {/* Demo Accounts Helper */}
         <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4">
-          <div className="flex items-center gap-1.5 mb-2 text-xs font-bold text-amber-900">
-            <Sparkles className="h-3.5 w-3.5 text-amber-600" />
+          <div className="flex items-center gap-1.5 mb-2.5 text-sm font-bold text-amber-900">
+            <Sparkles className="h-4 w-4 text-amber-600" />
             <span>Tài khoản thử nghiệm nhanh (Mật khẩu: 123456)</span>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <button
               type="button"
               onClick={() => handleDemoLogin('hocsinh@flippedclassroom.edu.vn')}
-              className="rounded-lg bg-white border border-amber-300 px-2 py-1.5 text-[11px] font-semibold text-slate-800 hover:bg-amber-100/50 shadow-xs"
+              className="rounded-lg bg-white border border-amber-300 px-2 py-2 text-xs sm:text-sm font-semibold text-slate-800 hover:bg-amber-100/50 shadow-xs"
             >
               Học sinh
             </button>
             <button
               type="button"
               onClick={() => handleDemoLogin('thaynam.toan@flippedclassroom.edu.vn')}
-              className="rounded-lg bg-white border border-amber-300 px-2 py-1.5 text-[11px] font-semibold text-slate-800 hover:bg-amber-100/50 shadow-xs"
+              className="rounded-lg bg-white border border-amber-300 px-2 py-2 text-xs sm:text-sm font-semibold text-slate-800 hover:bg-amber-100/50 shadow-xs"
             >
               Giáo viên
             </button>
             <button
               type="button"
               onClick={() => handleDemoLogin('admin@flippedclassroom.edu.vn')}
-              className="rounded-lg bg-white border border-amber-300 px-2 py-1.5 text-[11px] font-semibold text-slate-800 hover:bg-amber-100/50 shadow-xs"
+              className="rounded-lg bg-white border border-amber-300 px-2 py-2 text-xs sm:text-sm font-semibold text-slate-800 hover:bg-amber-100/50 shadow-xs"
             >
               Quản trị
             </button>
@@ -154,7 +154,7 @@ function LoginForm() {
         </div>
 
         {/* Switch to Register */}
-        <div className="text-center text-xs text-slate-500">
+        <div className="text-center text-sm text-slate-600">
           Chưa có tài khoản?{' '}
           <Link href="/dang-ky" className="font-bold text-brand-blue hover:underline">
             Đăng ký ngay

@@ -99,13 +99,13 @@ export default function CreateMaterialPage() {
           <div className="mb-6 flex items-center justify-between">
             <Link
               href="/dashboard/giao-vien"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-brand-blue"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-brand-blue transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Quay lại Dashboard</span>
             </Link>
 
-            <span className="text-xs text-slate-500 font-medium">
+            <span className="text-sm text-slate-500 font-medium">
               Chế độ tạo bài học đảo ngược
             </span>
           </div>
@@ -113,23 +113,23 @@ export default function CreateMaterialPage() {
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Main Info Card */}
             <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
-              <h2 className="text-lg font-bold text-slate-900 mb-1">
+              <h2 className="text-xl font-bold text-slate-900 mb-1">
                 Thông tin chung về bài học
               </h2>
-              <p className="text-xs text-slate-500 mb-6">
+              <p className="text-sm text-slate-600 mb-6">
                 Cung cấp các thông tin cơ bản để học sinh dễ dàng tìm kiếm và nhận diện bài học.
               </p>
 
               {errorMessage && (
-                <div className="mb-6 flex items-center gap-2 rounded-xl bg-red-50 p-3 text-xs font-medium text-red-700 border border-red-200">
+                <div className="mb-6 flex items-center gap-2 rounded-xl bg-red-50 p-3.5 text-sm font-medium text-red-700 border border-red-200">
                   <AlertCircle className="h-4 w-4 shrink-0" />
                   <span>{errorMessage}</span>
                 </div>
               )}
 
-              <div className="space-y-4">
+              <div className="space-y-5">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 mb-1">
+                  <label className="block text-sm font-semibold text-slate-800 mb-1.5">
                     Tiêu đề bài học <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -138,12 +138,12 @@ export default function CreateMaterialPage() {
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                     placeholder="Ví dụ: Bài 2 - Khảo sát sự biến thiên và vẽ đồ thị hàm số bậc 3"
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs text-slate-900 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 mb-1">
+                  <label className="block text-sm font-semibold text-slate-800 mb-1.5">
                     Mô tả ngắn gọn <span className="text-red-500">*</span>
                   </label>
                   <textarea
@@ -152,19 +152,19 @@ export default function CreateMaterialPage() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     placeholder="Mô tả mục tiêu bài học, kiến thức cần chuẩn bị trước khi đến lớp..."
-                    className="w-full rounded-xl border border-slate-300 p-3 text-xs text-slate-900 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                    className="w-full rounded-xl border border-slate-300 p-3.5 text-base text-slate-900 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue leading-relaxed"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-800 mb-1">
+                    <label className="block text-sm font-semibold text-slate-800 mb-1.5">
                       Môn học <span className="text-red-500">*</span>
                     </label>
                     <select
                       value={subjectId}
                       onChange={(e) => setSubjectId(e.target.value)}
-                      className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-xs text-slate-900 focus:border-brand-blue focus:outline-none"
+                      className="w-full rounded-xl border border-slate-300 py-3 px-3.5 text-base text-slate-900 focus:border-brand-blue focus:outline-none"
                     >
                       {categories.map((c) => (
                         <option key={c.id} value={c.id}>
@@ -175,13 +175,13 @@ export default function CreateMaterialPage() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-800 mb-1">
+                    <label className="block text-sm font-semibold text-slate-800 mb-1.5">
                       Khối lớp
                     </label>
                     <select
                       value={educationalLevel}
                       onChange={(e) => setEducationalLevel(e.target.value)}
-                      className="w-full rounded-xl border border-slate-300 py-2.5 px-3 text-xs text-slate-900 focus:border-brand-blue focus:outline-none"
+                      className="w-full rounded-xl border border-slate-300 py-3 px-3.5 text-base text-slate-900 focus:border-brand-blue focus:outline-none"
                     >
                       <option value="Lớp 10">Lớp 10</option>
                       <option value="Lớp 11">Lớp 11</option>
@@ -193,7 +193,7 @@ export default function CreateMaterialPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 mb-1">
+                  <label className="block text-sm font-semibold text-slate-800 mb-1.5">
                     Đường dẫn ảnh bìa (Thumbnail URL - không bắt buộc)
                   </label>
                   <input
@@ -201,34 +201,34 @@ export default function CreateMaterialPage() {
                     value={coverImage}
                     onChange={(e) => setCoverImage(e.target.value)}
                     placeholder="https://images.unsplash.com/... hoặc để trống để dùng ảnh mặc định theo môn"
-                    className="w-full rounded-xl border border-slate-300 px-3.5 py-2 text-xs text-slate-900 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                    className="w-full rounded-xl border border-slate-300 px-4 py-3 text-base text-slate-900 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-800 mb-1">
+                  <label className="block text-sm font-semibold text-slate-800 mb-2">
                     Trạng thái xuất bản
                   </label>
-                  <div className="flex gap-4">
-                    <label className="flex items-center gap-2 cursor-pointer text-xs">
+                  <div className="flex gap-5">
+                    <label className="flex items-center gap-2 cursor-pointer text-sm">
                       <input
                         type="radio"
                         name="status"
                         value="published"
                         checked={status === 'published'}
                         onChange={() => setStatus('published')}
-                        className="text-brand-blue"
+                        className="text-brand-blue h-4 w-4"
                       />
                       <span className="font-semibold text-emerald-700">Đăng công khai ngay</span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer text-xs">
+                    <label className="flex items-center gap-2 cursor-pointer text-sm">
                       <input
                         type="radio"
                         name="status"
                         value="draft"
                         checked={status === 'draft'}
                         onChange={() => setStatus('draft')}
-                        className="text-amber-600"
+                        className="text-amber-600 h-4 w-4"
                       />
                       <span className="font-medium text-slate-600">Lưu bản nháp</span>
                     </label>
@@ -246,7 +246,7 @@ export default function CreateMaterialPage() {
             <div className="flex items-center justify-end gap-3 sticky bottom-4 bg-white/90 backdrop-blur p-4 rounded-2xl border border-slate-200 shadow-xl">
               <Link
                 href="/dashboard/giao-vien"
-                className="rounded-xl border border-slate-300 px-5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50"
+                className="rounded-xl border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
               >
                 Hủy bỏ
               </Link>
@@ -254,7 +254,7 @@ export default function CreateMaterialPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="inline-flex items-center gap-2 rounded-xl bg-brand-yellow px-6 py-2.5 text-xs font-bold text-slate-950 shadow hover:bg-brand-yellow-hover disabled:opacity-50 transition-all"
+                className="inline-flex items-center gap-2 rounded-xl bg-brand-yellow px-7 py-3 text-sm sm:text-base font-bold text-slate-950 shadow hover:bg-brand-yellow-hover disabled:opacity-50 transition-all"
               >
                 {loading ? (
                   <>

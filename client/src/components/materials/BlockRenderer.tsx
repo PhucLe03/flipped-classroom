@@ -18,17 +18,17 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, index }) =>
       <div className="my-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
         {block.title && (
           <div className="mb-3 flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-red-100 text-red-600">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 text-red-600">
               <Youtube className="h-4 w-4" />
             </div>
-            <h3 className="text-base font-bold text-slate-800">{block.title}</h3>
+            <h3 className="text-lg font-bold text-slate-900">{block.title}</h3>
           </div>
         )}
 
         {block.youtubeVideoId ? (
           <MovieClip videoId={block.youtubeVideoId} title={block.title} />
         ) : (
-          <div className="rounded-xl bg-slate-100 p-4 text-center text-xs text-slate-500">
+          <div className="rounded-xl bg-slate-100 p-4 text-center text-sm text-slate-500">
             Không thể tải video YouTube từ đường dẫn đã cung cấp.
           </div>
         )}
@@ -39,10 +39,10 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, index }) =>
               href={block.youtubeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-blue hover:text-brand-blue-dark hover:underline"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-blue hover:text-brand-blue-dark hover:underline"
             >
               <span>Xem trực tiếp trên YouTube</span>
-              <ExternalLink className="h-3.5 w-3.5" />
+              <ExternalLink className="h-4 w-4" />
             </a>
           </div>
         )}
@@ -52,34 +52,34 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, index }) =>
 
   if (block.type === 'gdrive') {
     return (
-      <div className="my-6 rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/50 to-white p-4 sm:p-6 shadow-sm">
+      <div className="my-6 rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/50 to-white p-5 sm:p-7 shadow-sm">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-amber-100">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-400/20 text-amber-700">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/20 text-amber-700 shrink-0">
+              <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M7.71 3.5L1.15 15l3.43 6 6.55-11.5L7.71 3.5zm3.43 6l4.29 7.5H22.8l-4.29-7.5h-7.37zm7.69 9.5l-3.43 6H4.58l3.43-6h10.82z" />
               </svg>
             </div>
             <div>
-              <span className="text-xs font-semibold text-amber-800 uppercase tracking-wider block">
+              <span className="text-xs font-bold text-amber-800 uppercase tracking-wider block">
                 Tài liệu Google Drive đính kèm
               </span>
-              <h4 className="text-sm font-bold text-slate-900">
+              <h4 className="text-base font-bold text-slate-900">
                 {block.gdriveTitle || block.title || 'Tài liệu học tập trên Google Drive'}
               </h4>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
             {block.gdriveFileId && (
               <button
                 type="button"
                 onClick={() => setShowDrivePreview(!showDrivePreview)}
-                className="flex items-center gap-1 rounded-lg border border-amber-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-amber-900 hover:bg-amber-50"
+                className="flex items-center gap-1.5 rounded-xl border border-amber-300 bg-white px-3 py-2 text-xs sm:text-sm font-semibold text-amber-900 hover:bg-amber-50 shadow-xs"
               >
-                <Eye className="h-3.5 w-3.5" />
+                <Eye className="h-4 w-4" />
                 <span>{showDrivePreview ? 'Thu gọn xem trước' : 'Xem trước tài liệu'}</span>
-                {showDrivePreview ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
+                {showDrivePreview ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               </button>
             )}
 
@@ -88,10 +88,10 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, index }) =>
                 href={block.gdriveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-1.5 rounded-lg bg-amber-400 px-3 py-1.5 text-xs font-bold text-slate-900 shadow-sm hover:bg-brand-yellow-hover"
+                className="flex items-center gap-1.5 rounded-xl bg-amber-400 px-3.5 py-2 text-xs sm:text-sm font-bold text-slate-900 shadow-sm hover:bg-brand-yellow-hover"
               >
                 <span>Mở trong Drive</span>
-                <ExternalLink className="h-3.5 w-3.5" />
+                <ExternalLink className="h-4 w-4" />
               </a>
             )}
           </div>
@@ -103,7 +103,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, index }) =>
             <iframe
               src={`https://drive.google.com/file/d/${block.gdriveFileId}/preview`}
               title={block.gdriveTitle || 'Xem trước Google Drive'}
-              className="h-[500px] w-full border-0"
+              className="h-[520px] w-full border-0"
               allow="autoplay"
             />
           </div>
@@ -114,17 +114,17 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, index }) =>
 
   // Rich Text block
   return (
-    <div className="my-6 rounded-2xl border border-slate-200 bg-white p-5 sm:p-7 shadow-sm">
+    <div className="my-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
       {block.title && (
-        <div className="mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-100 text-brand-blue">
+        <div className="mb-4 flex items-center gap-2.5 border-b border-slate-100 pb-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-100 text-brand-blue">
             <FileText className="h-4 w-4" />
           </div>
-          <h3 className="text-base font-bold text-slate-900">{block.title}</h3>
+          <h3 className="text-lg font-bold text-slate-900">{block.title}</h3>
         </div>
       )}
       <div
-        className="tiptap-content prose-educational max-w-none text-slate-800 text-sm leading-relaxed"
+        className="tiptap-content prose-educational max-w-none text-slate-800 text-base leading-relaxed"
         dangerouslySetInnerHTML={{ __html: block.richTextHtml || '<p>Chưa có nội dung văn bản.</p>' }}
       />
     </div>

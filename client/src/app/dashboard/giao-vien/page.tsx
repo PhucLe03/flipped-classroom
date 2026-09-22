@@ -88,17 +88,17 @@ export default function TeacherDashboardPage() {
           {/* Dashboard Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-blue mb-1 block">
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-brand-blue mb-1 block">
                 Không gian giáo viên
               </span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900">
                 Dashboard Quản Lý Tài Liệu
               </h1>
             </div>
 
             <Link
               href="/dashboard/giao-vien/tao-tai-lieu"
-              className="inline-flex items-center gap-2 rounded-xl bg-brand-yellow px-5 py-2.5 text-xs font-bold text-slate-950 shadow hover:bg-brand-yellow-hover transition-all self-start sm:self-auto"
+              className="inline-flex items-center gap-2 rounded-xl bg-brand-yellow px-5 py-3 text-sm font-bold text-slate-950 shadow hover:bg-brand-yellow-hover transition-all self-start sm:self-auto"
             >
               <Plus className="h-4 w-4 stroke-[3]" />
               <span>Tạo tài liệu mới</span>
@@ -109,41 +109,41 @@ export default function TeacherDashboardPage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-slate-500">Tổng số tài liệu</span>
+                <span className="text-sm font-semibold text-slate-600">Tổng số tài liệu</span>
                 <BookOpen className="h-5 w-5 text-brand-blue" />
               </div>
-              <p className="text-2xl font-bold text-slate-900">{metrics.totalMaterials}</p>
+              <p className="text-3xl font-extrabold text-slate-900">{metrics.totalMaterials}</p>
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-slate-500">Đã xuất bản</span>
+                <span className="text-sm font-semibold text-slate-600">Đã xuất bản</span>
                 <FileCheck className="h-5 w-5 text-emerald-600" />
               </div>
-              <p className="text-2xl font-bold text-emerald-600">{metrics.published}</p>
+              <p className="text-3xl font-extrabold text-emerald-600">{metrics.published}</p>
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-slate-500">Bản nháp</span>
+                <span className="text-sm font-semibold text-slate-600">Bản nháp</span>
                 <Clock className="h-5 w-5 text-amber-500" />
               </div>
-              <p className="text-2xl font-bold text-amber-600">{metrics.drafts}</p>
+              <p className="text-3xl font-extrabold text-amber-600">{metrics.drafts}</p>
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold text-slate-500">Tổng lượt xem</span>
+                <span className="text-sm font-semibold text-slate-600">Tổng lượt xem</span>
                 <Eye className="h-5 w-5 text-indigo-600" />
               </div>
-              <p className="text-2xl font-bold text-indigo-600">{metrics.totalViews}</p>
+              <p className="text-3xl font-extrabold text-indigo-600">{metrics.totalViews}</p>
             </div>
           </div>
 
           {/* Materials Table */}
           <div className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden">
-            <div className="border-b border-slate-100 p-5 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-900">
+            <div className="border-b border-slate-100 p-5 sm:p-6 flex items-center justify-between">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900">
                 Danh sách bài học của bạn ({materials.length})
               </h3>
             </div>
@@ -154,16 +154,16 @@ export default function TeacherDashboardPage() {
               </div>
             ) : materials.length > 0 ? (
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-700">
-                  <thead className="border-b border-slate-100 bg-slate-50/70 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <table className="w-full text-left text-sm text-slate-700">
+                  <thead className="border-b border-slate-100 bg-slate-50/70 text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
                     <tr>
-                      <th className="px-5 py-3.5">Tiêu đề bài học</th>
-                      <th className="px-4 py-3.5">Môn học</th>
-                      <th className="px-4 py-3.5">Khối lớp</th>
-                      <th className="px-4 py-3.5">Khối nội dung</th>
-                      <th className="px-4 py-3.5">Lượt xem</th>
-                      <th className="px-4 py-3.5">Trạng thái</th>
-                      <th className="px-5 py-3.5 text-right">Thao tác</th>
+                      <th className="px-5 py-4">Tiêu đề bài học</th>
+                      <th className="px-4 py-4">Môn học</th>
+                      <th className="px-4 py-4">Khối lớp</th>
+                      <th className="px-4 py-4">Khối nội dung</th>
+                      <th className="px-4 py-4">Lượt xem</th>
+                      <th className="px-4 py-4">Trạng thái</th>
+                      <th className="px-5 py-4 text-right">Thao tác</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
@@ -174,7 +174,7 @@ export default function TeacherDashboardPage() {
 
                       return (
                         <tr key={m._id} className="hover:bg-slate-50/60 transition-colors">
-                          <td className="px-5 py-4 font-semibold text-slate-900 max-w-xs truncate">
+                          <td className="px-5 py-4 font-semibold text-slate-900 max-w-xs truncate text-sm sm:text-base">
                             <Link
                               href={`/tai-lieu/${m.slug}`}
                               className="hover:text-brand-blue hover:underline"
@@ -183,21 +183,21 @@ export default function TeacherDashboardPage() {
                             </Link>
                           </td>
                           <td className="px-4 py-4">
-                            <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-brand-blue">
+                            <span className="rounded-md bg-blue-50 px-2.5 py-1 text-xs sm:text-sm font-semibold text-brand-blue">
                               {subject?.name || 'Môn học'}
                             </span>
                           </td>
-                          <td className="px-4 py-4 text-slate-600">
+                          <td className="px-4 py-4 text-xs sm:text-sm text-slate-600">
                             {m.educationalLevel || 'Chung'}
                           </td>
                           <td className="px-4 py-4">
-                            <div className="flex items-center gap-1.5 text-slate-500">
+                            <div className="flex items-center gap-1.5 text-xs sm:text-sm text-slate-600">
                               <span>{m.blocks?.length || 0} khối</span>
-                              {hasVideo && <Video className="h-3.5 w-3.5 text-red-500" />}
-                              {hasDrive && <FolderOpen className="h-3.5 w-3.5 text-amber-500" />}
+                              {hasVideo && <Video className="h-4 w-4 text-red-500" />}
+                              {hasDrive && <FolderOpen className="h-4 w-4 text-amber-500" />}
                             </div>
                           </td>
-                          <td className="px-4 py-4 font-medium text-slate-600">
+                          <td className="px-4 py-4 font-semibold text-xs sm:text-sm text-slate-700">
                             {m.viewCount || 0}
                           </td>
                           <td className="px-4 py-4">
@@ -205,7 +205,7 @@ export default function TeacherDashboardPage() {
                               type="button"
                               onClick={() => toggleStatus(m)}
                               disabled={actionLoading === m._id}
-                              className={`rounded-full px-2.5 py-0.5 text-[11px] font-bold transition-colors ${
+                              className={`rounded-full px-3 py-1 text-xs font-bold transition-colors ${
                                 m.status === 'published'
                                   ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
                                   : 'bg-amber-50 text-amber-700 hover:bg-amber-100'
@@ -219,14 +219,14 @@ export default function TeacherDashboardPage() {
                               <Link
                                 href={`/tai-lieu/${m.slug}`}
                                 target="_blank"
-                                className="rounded p-1.5 text-slate-400 hover:bg-slate-100 hover:text-brand-blue"
+                                className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-brand-blue"
                                 title="Xem trang học sinh"
                               >
                                 <ExternalLink className="h-4 w-4" />
                               </Link>
                               <Link
                                 href={`/dashboard/giao-vien/chinh-sua/${m._id}`}
-                                className="rounded p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-800"
+                                className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-800"
                                 title="Chỉnh sửa bài học"
                               >
                                 <FileEdit className="h-4 w-4" />
@@ -235,7 +235,7 @@ export default function TeacherDashboardPage() {
                                 type="button"
                                 onClick={() => handleDelete(m._id, m.title)}
                                 disabled={actionLoading === m._id}
-                                className="rounded p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600"
+                                className="rounded-lg p-2 text-red-400 hover:bg-red-50 hover:text-red-600"
                                 title="Xóa bài học"
                               >
                                 <Trash2 className="h-4 w-4" />

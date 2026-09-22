@@ -44,26 +44,26 @@ const Navbar: React.FC = () => {
             <GraduationCap className="h-6 w-6 stroke-[2.5]" />
           </div>
           <div className="flex flex-col">
-            <span className="text-lg font-bold tracking-tight text-brand-blue leading-tight">
+            <span className="text-xl font-extrabold tracking-tight text-brand-blue leading-tight">
               Học Liệu Số
             </span>
-            <span className="text-[11px] font-semibold text-amber-500 uppercase tracking-wider">
+            <span className="text-xs font-bold text-amber-500 uppercase tracking-wider">
               Lớp Học Đảo Ngược
             </span>
           </div>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
+        <nav className="hidden md:flex items-center gap-1.5">
           {navLinks.map((link) => {
             const active = isActive(link.href);
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-4 py-2 rounded-xl text-base font-medium transition-colors ${
                   active
-                    ? 'text-brand-blue bg-blue-50 font-semibold'
+                    ? 'text-brand-blue bg-blue-50 font-bold shadow-xs'
                     : 'text-slate-600 hover:text-brand-blue hover:bg-slate-50'
                 }`}
               >
@@ -79,16 +79,16 @@ const Navbar: React.FC = () => {
             <div className="relative">
               <button
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
-                className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white py-1.5 pl-2 pr-3 text-sm font-medium text-slate-700 shadow-sm hover:border-brand-blue-light transition-all focus:outline-none"
+                className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white py-1.5 pl-2 pr-3.5 text-sm font-medium text-slate-700 shadow-sm hover:border-brand-blue-light transition-all focus:outline-none"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-blue text-white font-bold text-xs uppercase">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-blue text-white font-bold text-sm uppercase">
                   {user.fullName ? user.fullName.charAt(0) : 'U'}
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-xs font-semibold text-slate-800 line-clamp-1 max-w-[120px]">
+                  <span className="text-sm font-bold text-slate-800 line-clamp-1 max-w-[130px]">
                     {user.fullName}
                   </span>
-                  <span className="text-[10px] text-brand-blue capitalize font-medium">
+                  <span className="text-xs text-brand-blue capitalize font-semibold">
                     {user.role === 'admin'
                       ? 'Quản trị viên'
                       : user.role === 'teacher'

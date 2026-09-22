@@ -12,7 +12,8 @@
   }
 
   body {
-    @apply bg-slate-50 text-slate-900 antialiased;
+    @apply bg-slate-50 text-slate-900 antialiased text-base;
+    font-size: 16px;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
@@ -22,43 +23,44 @@
   }
 }
 
-/* TipTap Editor & Prose Content Styling */
+/* TipTap Editor & Prose Content Styling - Enhanced Readability */
 .tiptap-content,
 .prose-educational {
   color: #1e293b;
-  line-height: 1.75;
+  font-size: 1.0625rem; /* 17px */
+  line-height: 1.85;
 }
 
 .tiptap-content h1,
 .prose-educational h1 {
-  font-size: 1.875rem;
+  font-size: 2.25rem; /* 36px */
+  font-weight: 800;
+  color: #006199;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.tiptap-content h2,
+.prose-educational h2 {
+  font-size: 1.75rem; /* 28px */
   font-weight: 700;
   color: #006199;
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
 }
 
-.tiptap-content h2,
-.prose-educational h2 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #006199;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
-}
-
 .tiptap-content h3,
 .prose-educational h3 {
-  font-size: 1.25rem;
+  font-size: 1.375rem; /* 22px */
   font-weight: 600;
   color: #0f172a;
-  margin-top: 1rem;
+  margin-top: 1.25rem;
   margin-bottom: 0.5rem;
 }
 
 .tiptap-content p,
 .prose-educational p {
-  margin-bottom: 0.85rem;
+  margin-bottom: 1.15rem;
 }
 
 .tiptap-content ul,

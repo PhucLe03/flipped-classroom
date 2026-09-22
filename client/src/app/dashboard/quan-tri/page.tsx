@@ -188,10 +188,10 @@ export default function AdminDashboardPage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Header */}
           <div className="mb-8">
-            <span className="text-xs font-bold uppercase tracking-wider text-red-600 mb-1 block">
+            <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-red-600 mb-1 block">
               Khu vực Quản trị tối cao
             </span>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+            <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-900">
               Dashboard Quản Trị Hệ Thống
             </h1>
           </div>
@@ -200,77 +200,77 @@ export default function AdminDashboardPage() {
           {stats && (
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
-                <span className="text-xs font-semibold text-slate-500 block mb-1">Tổng người dùng</span>
-                <p className="text-2xl font-bold text-slate-900">{stats.totalUsers}</p>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-sm font-semibold text-slate-600 block mb-1">Tổng người dùng</span>
+                <p className="text-3xl font-extrabold text-slate-900">{stats.totalUsers}</p>
+                <span className="text-xs text-slate-500 font-medium">
                   {stats.totalTeachers} GV / {stats.totalStudents} HS
                 </span>
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
-                <span className="text-xs font-semibold text-slate-500 block mb-1">Tổng bài học</span>
-                <p className="text-2xl font-bold text-brand-blue">{stats.totalMaterials}</p>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-sm font-semibold text-slate-600 block mb-1">Tổng bài học</span>
+                <p className="text-3xl font-extrabold text-brand-blue">{stats.totalMaterials}</p>
+                <span className="text-xs text-slate-500 font-medium">
                   {stats.publishedMaterials} đã đăng / {stats.draftMaterials} nháp
                 </span>
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
-                <span className="text-xs font-semibold text-slate-500 block mb-1">Môn học</span>
-                <p className="text-2xl font-bold text-emerald-600">{stats.totalCategories}</p>
-                <span className="text-[11px] text-slate-400">Đang kích hoạt</span>
+                <span className="text-sm font-semibold text-slate-600 block mb-1">Môn học</span>
+                <p className="text-3xl font-extrabold text-emerald-600">{stats.totalCategories}</p>
+                <span className="text-xs text-slate-500 font-medium">Đang kích hoạt</span>
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
-                <span className="text-xs font-semibold text-slate-500 block mb-1">Lượt truy cập</span>
-                <p className="text-2xl font-bold text-indigo-600">{stats.totalViews}</p>
-                <span className="text-[11px] text-slate-400">Lượt xem tài liệu</span>
+                <span className="text-sm font-semibold text-slate-600 block mb-1">Lượt truy cập</span>
+                <p className="text-3xl font-extrabold text-indigo-600">{stats.totalViews}</p>
+                <span className="text-xs text-slate-500 font-medium">Lượt xem tài liệu</span>
               </div>
 
               <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
-                <span className="text-xs font-semibold text-slate-500 block mb-1">Hệ thống</span>
-                <p className="text-lg font-bold text-emerald-600">Online</p>
-                <span className="text-[11px] text-slate-400">Hoạt động bình thường</span>
+                <span className="text-sm font-semibold text-slate-600 block mb-1">Hệ thống</span>
+                <p className="text-xl font-extrabold text-emerald-600">Online</p>
+                <span className="text-xs text-slate-500 font-medium">Hoạt động bình thường</span>
               </div>
             </div>
           )}
 
           {/* Navigation Tabs */}
-          <div className="flex border-b border-slate-200 mb-6 gap-2">
+          <div className="flex border-b border-slate-200 mb-6 gap-3">
             <button
               type="button"
               onClick={() => setActiveTab('users')}
-              className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 border-b-2 py-3.5 px-4 text-sm sm:text-base font-bold transition-all ${
                 activeTab === 'users'
                   ? 'border-brand-blue text-brand-blue'
                   : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
-              <Users className="h-4 w-4" />
+              <Users className="h-4.5 w-4.5" />
               <span>Quản lý Người dùng ({users.length})</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('categories')}
-              className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 border-b-2 py-3.5 px-4 text-sm sm:text-base font-bold transition-all ${
                 activeTab === 'categories'
                   ? 'border-brand-blue text-brand-blue'
                   : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
-              <FolderTree className="h-4 w-4" />
+              <FolderTree className="h-4.5 w-4.5" />
               <span>Quản lý Môn học ({categories.length})</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveTab('materials')}
-              className={`flex items-center gap-2 border-b-2 py-3 px-4 text-xs font-bold transition-all ${
+              className={`flex items-center gap-2 border-b-2 py-3.5 px-4 text-sm sm:text-base font-bold transition-all ${
                 activeTab === 'materials'
                   ? 'border-brand-blue text-brand-blue'
                   : 'border-transparent text-slate-500 hover:text-slate-800'
               }`}
             >
-              <BookOpen className="h-4 w-4" />
+              <BookOpen className="h-4.5 w-4.5" />
               <span>Toàn bộ Học liệu ({materials.length})</span>
             </button>
           </div>
@@ -279,36 +279,36 @@ export default function AdminDashboardPage() {
           {activeTab === 'users' && (
             <div className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs text-slate-700">
-                  <thead className="border-b border-slate-100 bg-slate-50/70 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <table className="w-full text-left text-sm text-slate-700">
+                  <thead className="border-b border-slate-100 bg-slate-50/70 text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
                     <tr>
-                      <th className="px-5 py-3.5">Họ và tên</th>
-                      <th className="px-4 py-3.5">Email</th>
-                      <th className="px-4 py-3.5">Vai trò</th>
-                      <th className="px-4 py-3.5">Trạng thái</th>
-                      <th className="px-5 py-3.5 text-right">Thao tác</th>
+                      <th className="px-5 py-4">Họ và tên</th>
+                      <th className="px-4 py-4">Email</th>
+                      <th className="px-4 py-4">Vai trò</th>
+                      <th className="px-4 py-4">Trạng thái</th>
+                      <th className="px-5 py-4 text-right">Thao tác</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {users.map((u) => (
                       <tr key={u.id} className="hover:bg-slate-50/60">
-                        <td className="px-5 py-3.5 font-bold text-slate-900">{u.fullName}</td>
-                        <td className="px-4 py-3.5 text-slate-600 font-mono text-[11px]">{u.email}</td>
-                        <td className="px-4 py-3.5">
+                        <td className="px-5 py-4 font-bold text-slate-900 text-sm sm:text-base">{u.fullName}</td>
+                        <td className="px-4 py-4 text-slate-600 font-mono text-xs sm:text-sm">{u.email}</td>
+                        <td className="px-4 py-4">
                           <select
                             value={u.role}
                             onChange={(e) => handleRoleChange(u.id, e.target.value)}
                             disabled={actionLoading === u.id}
-                            className="rounded-lg border border-slate-300 py-1 px-2 text-xs font-semibold text-slate-800 focus:outline-none"
+                            className="rounded-lg border border-slate-300 py-1.5 px-3 text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none"
                           >
                             <option value="student">Học sinh</option>
                             <option value="teacher">Giáo viên</option>
                             <option value="admin">Quản trị viên</option>
                           </select>
                         </td>
-                        <td className="px-4 py-3.5">
+                        <td className="px-4 py-4">
                           <span
-                            className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                            className={`rounded-full px-3 py-1 text-xs font-bold ${
                               (u as any).isActive !== false
                                 ? 'bg-emerald-50 text-emerald-700'
                                 : 'bg-red-50 text-red-700'
@@ -317,12 +317,12 @@ export default function AdminDashboardPage() {
                             {(u as any).isActive !== false ? 'Hoạt động' : 'Đã khóa'}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 text-right">
+                        <td className="px-5 py-4 text-right">
                           <button
                             type="button"
                             onClick={() => handleToggleUserStatus(u.id)}
                             disabled={actionLoading === u.id}
-                            className="text-xs font-semibold text-slate-500 hover:text-slate-800"
+                            className="text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900"
                           >
                             {(u as any).isActive !== false ? 'Khóa tài khoản' : 'Mở khóa'}
                           </button>
@@ -339,8 +339,8 @@ export default function AdminDashboardPage() {
           {activeTab === 'categories' && (
             <div className="space-y-6">
               {/* Create Category Form */}
-              <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-xs">
-                <h3 className="text-sm font-bold text-slate-900 mb-3">Thêm Môn học / Danh mục mới</h3>
+              <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-7 shadow-xs">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 mb-3">Thêm Môn học / Danh mục mới</h3>
                 <form onSubmit={handleCreateCategory} className="flex flex-col sm:flex-row gap-3">
                   <input
                     type="text"
@@ -348,19 +348,19 @@ export default function AdminDashboardPage() {
                     placeholder="Tên môn học (Ví dụ: Lịch sử, Địa lý...)"
                     value={newCatName}
                     onChange={(e) => setNewCatName(e.target.value)}
-                    className="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs focus:outline-none focus:border-brand-blue"
+                    className="flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm sm:text-base focus:outline-none focus:border-brand-blue"
                   />
                   <input
                     type="text"
                     placeholder="Mô tả ngắn"
                     value={newCatDesc}
                     onChange={(e) => setNewCatDesc(e.target.value)}
-                    className="flex-1 rounded-xl border border-slate-300 px-3 py-2 text-xs focus:outline-none focus:border-brand-blue"
+                    className="flex-1 rounded-xl border border-slate-300 px-4 py-3 text-sm sm:text-base focus:outline-none focus:border-brand-blue"
                   />
                   <button
                     type="submit"
                     disabled={actionLoading === 'create-cat'}
-                    className="rounded-xl bg-brand-blue px-5 py-2 text-xs font-bold text-white hover:bg-brand-blue-dark shadow-xs"
+                    className="rounded-xl bg-brand-blue px-6 py-3 text-sm sm:text-base font-bold text-white hover:bg-brand-blue-dark shadow-xs"
                   >
                     Thêm môn học
                   </button>
@@ -369,30 +369,30 @@ export default function AdminDashboardPage() {
 
               {/* Categories List */}
               <div className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden">
-                <table className="w-full text-left text-xs text-slate-700">
-                  <thead className="border-b border-slate-100 bg-slate-50/70 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                <table className="w-full text-left text-sm text-slate-700">
+                  <thead className="border-b border-slate-100 bg-slate-50/70 text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
                     <tr>
-                      <th className="px-5 py-3.5">Tên môn học</th>
-                      <th className="px-4 py-3.5">Đường dẫn Slug</th>
-                      <th className="px-4 py-3.5">Số bài học</th>
-                      <th className="px-5 py-3.5 text-right">Thao tác</th>
+                      <th className="px-5 py-4">Tên môn học</th>
+                      <th className="px-4 py-4">Đường dẫn Slug</th>
+                      <th className="px-4 py-4">Số bài học</th>
+                      <th className="px-5 py-4 text-right">Thao tác</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {categories.map((c) => (
                       <tr key={c.id} className="hover:bg-slate-50/60">
-                        <td className="px-5 py-3.5 font-bold text-slate-900">{c.name}</td>
-                        <td className="px-4 py-3.5 font-mono text-[11px] text-slate-500">{c.slug}</td>
-                        <td className="px-4 py-3.5 font-semibold text-slate-700">{c.materialCount || 0}</td>
-                        <td className="px-5 py-3.5 text-right">
+                        <td className="px-5 py-4 font-bold text-slate-900 text-sm sm:text-base">{c.name}</td>
+                        <td className="px-4 py-4 font-mono text-xs sm:text-sm text-slate-500">{c.slug}</td>
+                        <td className="px-4 py-4 font-semibold text-slate-800 text-sm">{c.materialCount || 0}</td>
+                        <td className="px-5 py-4 text-right">
                           <button
                             type="button"
                             onClick={() => handleDeleteCategory(c.id, c.name)}
                             disabled={actionLoading === c.id}
-                            className="rounded p-1 text-red-500 hover:bg-red-50"
+                            className="rounded-lg p-2 text-red-500 hover:bg-red-50"
                             title="Xóa danh mục"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4.5 w-4.5" />
                           </button>
                         </td>
                       </tr>
@@ -406,14 +406,14 @@ export default function AdminDashboardPage() {
           {/* Tab 3: Materials */}
           {activeTab === 'materials' && (
             <div className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden">
-              <table className="w-full text-left text-xs text-slate-700">
-                <thead className="border-b border-slate-100 bg-slate-50/70 text-[11px] font-bold uppercase tracking-wider text-slate-500">
+              <table className="w-full text-left text-sm text-slate-700">
+                <thead className="border-b border-slate-100 bg-slate-50/70 text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-600">
                   <tr>
-                    <th className="px-5 py-3.5">Tiêu đề bài học</th>
-                    <th className="px-4 py-3.5">Môn học</th>
-                    <th className="px-4 py-3.5">Tác giả / Giáo viên</th>
-                    <th className="px-4 py-3.5">Trạng thái</th>
-                    <th className="px-5 py-3.5 text-right">Thao tác</th>
+                    <th className="px-5 py-4">Tiêu đề bài học</th>
+                    <th className="px-4 py-4">Môn học</th>
+                    <th className="px-4 py-4">Tác giả / Giáo viên</th>
+                    <th className="px-4 py-4">Trạng thái</th>
+                    <th className="px-5 py-4 text-right">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -423,20 +423,20 @@ export default function AdminDashboardPage() {
 
                     return (
                       <tr key={m._id} className="hover:bg-slate-50/60">
-                        <td className="px-5 py-3.5 font-bold text-slate-900 max-w-xs truncate">
+                        <td className="px-5 py-4 font-bold text-slate-900 max-w-xs truncate text-sm sm:text-base">
                           {m.title}
                         </td>
-                        <td className="px-4 py-3.5">
-                          <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-brand-blue">
+                        <td className="px-4 py-4">
+                          <span className="rounded-md bg-blue-50 px-2.5 py-1 text-xs sm:text-sm font-semibold text-brand-blue">
                             {subject?.name || 'Môn học'}
                           </span>
                         </td>
-                        <td className="px-4 py-3.5 text-slate-600">
+                        <td className="px-4 py-4 text-xs sm:text-sm text-slate-600">
                           {author?.fullName || 'Giáo viên'}
                         </td>
-                        <td className="px-4 py-3.5">
+                        <td className="px-4 py-4">
                           <span
-                            className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                            className={`rounded-full px-3 py-1 text-xs font-bold ${
                               m.status === 'published'
                                 ? 'bg-emerald-50 text-emerald-700'
                                 : 'bg-amber-50 text-amber-700'
@@ -445,12 +445,12 @@ export default function AdminDashboardPage() {
                             {m.status === 'published' ? 'Đã đăng' : 'Bản nháp'}
                           </span>
                         </td>
-                        <td className="px-5 py-3.5 text-right">
+                        <td className="px-5 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <Link
                               href={`/tai-lieu/${m.slug}`}
                               target="_blank"
-                              className="rounded p-1 text-slate-400 hover:text-brand-blue"
+                              className="rounded-lg p-2 text-slate-400 hover:text-brand-blue"
                               title="Xem bài học"
                             >
                               <ExternalLink className="h-4 w-4" />
@@ -459,7 +459,7 @@ export default function AdminDashboardPage() {
                               type="button"
                               onClick={() => handleDeleteMaterial(m._id, m.title)}
                               disabled={actionLoading === m._id}
-                              className="rounded p-1 text-red-400 hover:text-red-600"
+                              className="rounded-lg p-2 text-red-400 hover:text-red-600"
                               title="Xóa bài học"
                             >
                               <Trash2 className="h-4 w-4" />

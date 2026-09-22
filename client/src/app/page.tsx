@@ -35,8 +35,8 @@ export default function HomePage() {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
             {/* Pill badge */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur px-4 py-1.5 text-xs font-semibold text-brand-yellow-light border border-white/15 mb-6">
-              <Sparkles className="h-3.5 w-3.5 text-brand-yellow" />
+            <div className="inline-flex items-center gap-2 rounded-full bg-white/10 backdrop-blur px-4.5 py-2 text-sm font-semibold text-brand-yellow-light border border-white/20 mb-6">
+              <Sparkles className="h-4 w-4 text-brand-yellow" />
               <span>Phương pháp giảng dạy hiện đại & hiệu quả</span>
             </div>
 
@@ -45,7 +45,7 @@ export default function HomePage() {
               <span className="text-brand-yellow">Lớp Học Đảo Ngược</span>
             </h1>
 
-            <p className="text-base sm:text-lg text-sky-100 font-normal leading-relaxed mb-8 max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-sky-100 font-normal leading-relaxed mb-10 max-w-2xl mx-auto">
               Nền tảng học tập tập trung giúp học sinh chủ động nghiên cứu lý thuyết qua{' '}
               <strong className="text-brand-yellow">Video YouTube</strong>,{' '}
               <strong className="text-white">Bài đọc lý thuyết</strong> và{' '}
@@ -53,17 +53,17 @@ export default function HomePage() {
             </p>
 
             {/* Main CTAs */}
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/tai-lieu"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl bg-brand-yellow px-7 py-3.5 text-sm font-bold text-slate-950 shadow-lg shadow-yellow-500/20 hover:bg-brand-yellow-hover hover:scale-[1.02] active:scale-[0.98] transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 rounded-xl bg-brand-yellow px-8 py-4 text-base font-bold text-slate-950 shadow-lg shadow-yellow-500/20 hover:bg-brand-yellow-hover hover:scale-[1.02] active:scale-[0.98] transition-all"
               >
                 <span>Khám phá tài liệu học tập</span>
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-5 w-5" />
               </Link>
               <Link
                 href="/dang-nhap"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 backdrop-blur px-6 py-3.5 text-sm font-semibold text-white hover:bg-white/20 transition-all"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 backdrop-blur px-7 py-4 text-base font-semibold text-white hover:bg-white/20 transition-all"
               >
                 <span>Đăng nhập hệ thống</span>
               </Link>
@@ -73,44 +73,44 @@ export default function HomePage() {
       </section>
 
       {/* 3 Pillars of Flipped Classroom */}
-      <section className="py-16 bg-white border-b border-slate-200">
+      <section className="py-20 bg-white border-b border-slate-200">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-3">
+          <div className="text-center max-w-2xl mx-auto mb-14">
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4">
               Mô hình Lớp học đảo ngược hoạt động thế nào?
             </h2>
-            <p className="text-sm text-slate-600">
+            <p className="text-base sm:text-lg text-slate-600 leading-relaxed">
               Chuyển đổi từ cách học thụ động truyền thống sang tiếp cận chủ động, tối ưu thời gian thảo luận cùng thầy cô.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100 text-brand-blue font-bold text-lg mb-4">
+            <div className="rounded-3xl border border-slate-200 bg-slate-50/70 p-7 shadow-xs hover:shadow-md transition-shadow">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-brand-blue font-extrabold text-xl mb-5">
                 1
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Tự học trước tại nhà</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Tự học trước tại nhà</h3>
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
                 Học sinh xem video bài giảng, đọc tóm tắt công thức và tải phiếu bài tập từ Google Drive theo hướng dẫn của giáo viên.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-800 font-bold text-lg mb-4">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-7 shadow-xs hover:shadow-md transition-shadow">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-800 font-extrabold text-xl mb-5">
                 2
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Thảo luận trên lớp</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Thảo luận trên lớp</h3>
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
                 Thời gian trên lớp được dành trọn vẹn để giải đáp thắc mắc, làm việc nhóm, thực hành các câu hỏi vận dụng cao.
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/50 p-6 shadow-sm hover:shadow-md transition-shadow">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 font-bold text-lg mb-4">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-7 shadow-xs hover:shadow-md transition-shadow">
+              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 font-extrabold text-xl mb-5">
                 3
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2">Củng cố & Bứt phá</h3>
-              <p className="text-xs text-slate-600 leading-relaxed">
+              <h3 className="text-xl font-bold text-slate-900 mb-3">Củng cố & Bứt phá</h3>
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
                 Nắm chắc kiến thức nền tảng, tự tin giải quyết các dạng đề thi tốt nghiệp THPT và kỳ thi học sinh giỏi.
               </p>
             </div>
@@ -119,40 +119,40 @@ export default function HomePage() {
       </section>
 
       {/* Featured Subjects Section */}
-      <section className="py-16 bg-slate-50">
+      <section className="py-20 bg-slate-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-blue mb-1 block">
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-brand-blue mb-1.5 block">
                 Chương trình học
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900">
                 Các môn học trọng tâm
               </h2>
             </div>
             <Link
               href="/tai-lieu"
-              className="mt-2 sm:mt-0 inline-flex items-center gap-1.5 text-xs font-bold text-brand-blue hover:text-brand-blue-dark"
+              className="mt-3 sm:mt-0 inline-flex items-center gap-1.5 text-sm font-bold text-brand-blue hover:text-brand-blue-dark"
             >
               <span>Xem tất cả môn học</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
             {subjects.map((sub) => (
               <Link
                 key={sub.slug}
                 href={`/tai-lieu?subject=${sub.slug}`}
-                className="group flex flex-col items-center text-center p-5 rounded-2xl bg-white border border-slate-200 shadow-sm hover:border-brand-blue-light hover:shadow-md transition-all duration-200"
+                className="group flex flex-col items-center text-center p-6 rounded-3xl bg-white border border-slate-200 shadow-sm hover:border-brand-blue-light hover:shadow-md transition-all duration-200"
               >
-                <div className={`h-14 w-14 rounded-2xl bg-gradient-to-tr ${sub.color} flex items-center justify-center text-white shadow-md mb-3 group-hover:scale-110 transition-transform`}>
-                  <BookOpen className="h-6 w-6" />
+                <div className={`h-16 w-16 rounded-2xl bg-gradient-to-tr ${sub.color} flex items-center justify-center text-white shadow-md mb-4 group-hover:scale-110 transition-transform`}>
+                  <BookOpen className="h-7 w-7" />
                 </div>
-                <h3 className="text-sm font-bold text-slate-900 group-hover:text-brand-blue transition-colors">
+                <h3 className="text-base font-bold text-slate-900 group-hover:text-brand-blue transition-colors mb-1">
                   {sub.name}
                 </h3>
-                <span className="text-[11px] text-slate-500 mt-1">
+                <span className="text-xs sm:text-sm text-slate-500 font-medium">
                   {sub.count}
                 </span>
               </Link>
@@ -162,59 +162,59 @@ export default function HomePage() {
       </section>
 
       {/* Multi-Format Content Showcase */}
-      <section className="py-16 bg-white border-t border-slate-200">
+      <section className="py-20 bg-white border-t border-slate-200">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-amber-600 mb-2 block">
+              <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-amber-600 mb-2 block">
                 Học liệu phong phú
               </span>
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 mb-4 leading-tight">
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-5 leading-tight">
                 Tích hợp đa định dạng trong cùng một bài học
               </h2>
-              <p className="text-sm text-slate-600 leading-relaxed mb-6">
+              <p className="text-base sm:text-lg text-slate-600 leading-relaxed mb-8">
                 Giáo viên có thể xây dựng một bài học trọn gói gồm video trực quan, nội dung lý thuyết chi tiết với trình soạn thảo TipTap mượt mà hỗ trợ gõ tiếng Việt, kèm liên kết kho tài nguyên Google Drive.
               </p>
 
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 text-red-600 shrink-0">
-                    <Video className="h-4 w-4" />
+              <div className="space-y-5">
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-100 text-red-600 shrink-0">
+                    <Video className="h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900">Video bài giảng YouTube nhúng trực tiếp</h4>
-                    <p className="text-xs text-slate-500">Xem video bài giảng độ phân giải cao, tương thích mọi kích thước màn hình.</p>
+                    <h4 className="text-base font-bold text-slate-900">Video bài giảng YouTube nhúng trực tiếp</h4>
+                    <p className="text-sm text-slate-500 leading-relaxed">Xem video bài giảng độ phân giải cao, tương thích mọi kích thước màn hình.</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-100 text-brand-blue shrink-0">
-                    <FileText className="h-4 w-4" />
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-100 text-brand-blue shrink-0">
+                    <FileText className="h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900">Nội dung Rich Text chuẩn sư phạm</h4>
-                    <p className="text-xs text-slate-500">Định dạng tiêu đề, công thức, trích dẫn, danh sách ghi chú trực quan.</p>
+                    <h4 className="text-base font-bold text-slate-900">Nội dung Rich Text chuẩn sư phạm</h4>
+                    <p className="text-sm text-slate-500 leading-relaxed">Định dạng tiêu đề, công thức, trích dẫn, danh sách ghi chú trực quan.</p>
                   </div>
                 </div>
 
-                <div className="flex items-start gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 text-amber-800 shrink-0">
-                    <FolderOpen className="h-4 w-4" />
+                <div className="flex items-start gap-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100 text-amber-800 shrink-0">
+                    <FolderOpen className="h-5 w-5" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-bold text-slate-900">Kho tài liệu Google Drive an toàn</h4>
-                    <p className="text-xs text-slate-500">Xem trước tài liệu trực tiếp hoặc mở trong Drive để tải về máy.</p>
+                    <h4 className="text-base font-bold text-slate-900">Kho tài liệu Google Drive an toàn</h4>
+                    <p className="text-sm text-slate-500 leading-relaxed">Xem trước tài liệu trực tiếp hoặc mở trong Drive để tải về máy.</p>
                   </div>
                 </div>
               </div>
 
-              <div className="mt-8">
+              <div className="mt-10">
                 <Link
                   href="/tai-lieu"
-                  className="inline-flex items-center gap-2 rounded-xl bg-brand-blue px-6 py-3 text-xs font-bold text-white shadow-md hover:bg-brand-blue-dark transition-all"
+                  className="inline-flex items-center gap-2 rounded-xl bg-brand-blue px-7 py-3.5 text-sm sm:text-base font-bold text-white shadow-md hover:bg-brand-blue-dark transition-all"
                 >
                   <span>Bắt đầu học ngay hôm nay</span>
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight className="h-5 w-5" />
                 </Link>
               </div>
             </div>

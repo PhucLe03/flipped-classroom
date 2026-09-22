@@ -49,10 +49,10 @@ export default function SubjectsPage() {
           <span className="text-xs font-bold uppercase tracking-wider text-brand-blue mb-1 block">
             Chương trình đào tạo
           </span>
-          <h1 className="text-3xl font-extrabold text-slate-900 mb-3">
+          <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 mb-3">
             Danh Mục Môn Học
           </h1>
-          <p className="text-sm text-slate-600">
+          <p className="text-base sm:text-lg text-slate-600">
             Lựa chọn môn học bạn muốn nghiên cứu để truy cập video bài giảng và phiếu bài tập.
           </p>
         </div>
@@ -62,23 +62,23 @@ export default function SubjectsPage() {
             <Link
               key={sub.slug}
               href={`/tai-lieu?subject=${sub.slug}`}
-              className="group flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm hover:border-brand-blue-light hover:shadow-lg transition-all"
+              className="group flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 sm:p-7 shadow-sm hover:border-brand-blue-light hover:shadow-lg transition-all"
             >
               <div>
                 <div className={`h-12 w-12 rounded-2xl bg-gradient-to-tr ${sub.color} flex items-center justify-center text-white shadow-md mb-4 group-hover:scale-105 transition-transform`}>
                   <BookOpen className="h-6 w-6" />
                 </div>
-                <h3 className="text-lg font-bold text-slate-900 group-hover:text-brand-blue mb-2">
+                <h3 className="text-xl font-bold text-slate-900 group-hover:text-brand-blue mb-2.5">
                   {sub.name}
                 </h3>
-                <p className="text-xs text-slate-600 leading-relaxed">
+                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
                   {sub.description}
                 </p>
               </div>
 
-              <div className="mt-6 flex items-center gap-1 text-xs font-bold text-brand-blue group-hover:translate-x-1 transition-transform">
+              <div className="mt-6 flex items-center gap-1.5 text-sm sm:text-base font-bold text-brand-blue group-hover:translate-x-1.5 transition-transform">
                 <span>Vào kho tài liệu</span>
-                <ArrowRight className="h-3.5 w-3.5" />
+                <ArrowRight className="h-4 w-4" />
               </div>
             </Link>
           ))}

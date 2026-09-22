@@ -53,7 +53,7 @@ export const TipTapEditor: React.FC<TipTapEditorProps> = ({
     },
     editorProps: {
       attributes: {
-        class: 'tiptap ProseMirror min-h-[220px] focus:outline-none text-slate-800 text-sm leading-relaxed p-4',
+        class: 'tiptap ProseMirror min-h-[220px] focus:outline-none text-slate-800 text-base sm:text-[17px] leading-relaxed p-4 sm:p-5',
       },
     },
   });
