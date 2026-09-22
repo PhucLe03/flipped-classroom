@@ -176,7 +176,7 @@ export default function TeacherDashboardPage() {
                         <tr key={m._id} className="hover:bg-slate-50/60 transition-colors">
                           <td className="px-5 py-4 font-semibold text-slate-900 max-w-xs truncate text-sm sm:text-base">
                             <Link
-                              href={`/tai-lieu/${m.slug}`}
+                              href={`/tai-lieu/chi-tiet?slug=${m.slug}`}
                               className="hover:text-brand-blue hover:underline"
                             >
                               {m.title}
@@ -217,7 +217,7 @@ export default function TeacherDashboardPage() {
                           <td className="px-5 py-4 text-right">
                             <div className="flex items-center justify-end gap-2">
                               <Link
-                                href={`/tai-lieu/${m.slug}`}
+                                href={`/tai-lieu/chi-tiet?slug=${m.slug}`}
                                 target="_blank"
                                 className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-brand-blue"
                                 title="Xem trang học sinh"
@@ -225,7 +225,7 @@ export default function TeacherDashboardPage() {
                                 <ExternalLink className="h-4 w-4" />
                               </Link>
                               <Link
-                                href={`/dashboard/giao-vien/chinh-sua/${m._id}`}
+                                href={`/dashboard/giao-vien/chinh-sua?id=${m._id}`}
                                 className="rounded-lg p-2 text-slate-400 hover:bg-slate-100 hover:text-slate-800"
                                 title="Chỉnh sửa bài học"
                               >

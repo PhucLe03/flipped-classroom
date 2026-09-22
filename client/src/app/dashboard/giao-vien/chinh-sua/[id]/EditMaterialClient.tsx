@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import ProtectedRoute from '@/components/layout/ProtectedRoute';
 import BlockManager from '@/components/editor/BlockManager';
 import { Category, ContentBlock, StudyMaterial, ApiResponse } from '@/types';
@@ -21,8 +21,9 @@ interface EditMaterialClientProps {
 
 export default function EditMaterialClient({ id: propId }: EditMaterialClientProps) {
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const id = propId || (params?.id as string);
+  const id = propId || (params?.id as string) || (searchParams?.get('id') as string) || '';
 
   const [categories, setCategories] = useState<Category[]>([]);
   const [material, setMaterial] = useState<StudyMaterial | null>(null);
@@ -141,7 +142,7 @@ export default function EditMaterialClient({ id: propId }: EditMaterialClientPro
 
             {material?.slug && (
               <Link
-                href={`/tai-lieu/${material.slug}`}
+                href={`/tai-lieu/chi-tiet?slug=${material.slug}`}
                 target="_blank"
                 className="inline-flex items-center gap-1 text-sm font-semibold text-brand-blue hover:underline"
               >

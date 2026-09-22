@@ -448,7 +448,7 @@ export default function AdminDashboardPage() {
                         <td className="px-5 py-4 text-right">
                           <div className="flex items-center justify-end gap-2">
                             <Link
-                              href={`/tai-lieu/${m.slug}`}
+                              href={`/tai-lieu/chi-tiet?slug=${m.slug}`}
                               target="_blank"
                               className="rounded-lg p-2 text-slate-400 hover:text-brand-blue"
                               title="Xem bài học"

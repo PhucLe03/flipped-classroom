@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import ProtectedRoute from '@/components/layout/ProtectedRoute';
 import BlockRenderer from '@/components/materials/BlockRenderer';
 import { StudyMaterial, Category, User, ApiResponse } from '@/types';
@@ -24,8 +24,9 @@ interface MaterialDetailClientProps {
 
 export default function MaterialDetailClient({ slug: propSlug }: MaterialDetailClientProps) {
   const params = useParams();
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const slug = propSlug || (params?.slug as string);
+  const slug = propSlug || (params?.slug as string) || (searchParams?.get('slug') as string) || '';
 
   const [material, setMaterial] = useState<StudyMaterial | null>(null);
   const [loading, setLoading] = useState(true);
