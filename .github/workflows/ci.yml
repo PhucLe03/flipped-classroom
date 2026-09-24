@@ -20,6 +20,7 @@ jobs:
   build:
     name: Frontend Build & Typecheck
     runs-on: ubuntu-latest
+    environment: github-pages
     steps:
       - uses: actions/checkout@v4
 
@@ -38,9 +39,15 @@ jobs:
         working-directory: ./client
         env:
           GITHUB_PAGES: 'true'
-          NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH || '/flipped-classroom' }}
-          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
-        run: npm run build
+          NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH || vars.NEXT_PUBLIC_BASE_PATH || '/flipped-classroom' }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || vars.NEXT_PUBLIC_API_URL }}
+        run: |
+          if [ -z "$NEXT_PUBLIC_API_URL" ]; then
+            echo "::warning title=Missing API URL::NEXT_PUBLIC_API_URL is empty! Next.js will fallback to localhost:5000."
+          else
+            echo "NEXT_PUBLIC_API_URL is configured."
+          fi
+          npm run build
 
       - name: Upload GitHub Pages Artifact
         if: github.event_name != 'pull_request'
