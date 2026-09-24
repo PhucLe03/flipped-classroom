@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: Deploy Frontend to GitHub Pages
 
 on:
   push:
@@ -13,98 +13,13 @@ permissions:
   id-token: write
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: pages
   cancel-in-progress: false
 
 jobs:
-  # -----------------------------------------------------------
-  # 1. Verification & Testing Jobs
-  # -----------------------------------------------------------
-  backend-check:
-    name: Backend Build & Typecheck
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-          cache-dependency-path: server/package-lock.json
-      - name: Install Backend Dependencies
-        working-directory: ./server
-        run: npm ci
-      - name: Typecheck & Build Backend
-        working-directory: ./server
-        run: npm run build
-
-  frontend-check:
+  build:
     name: Frontend Build & Typecheck
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-          cache-dependency-path: client/package-lock.json
-      - name: Install Frontend Dependencies
-        working-directory: ./client
-        run: npm ci
-      - name: Test Frontend Static Export
-        working-directory: ./client
-        env:
-          GITHUB_PAGES: 'true'
-          NEXT_PUBLIC_BASE_PATH: '/flipped-classroom'
-        run: npm run build
-
-  # -----------------------------------------------------------
-  # 2. Deployment: Backend to Vercel
-  # -----------------------------------------------------------
-  deploy-backend-vercel:
-    name: Deploy Backend to Vercel
-    needs: [backend-check]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      # Deploy using amondnet/vercel-action if secrets are configured
-      - name: Deploy Backend to Vercel
-        if: ${{ env.VERCEL_TOKEN != '' }}
-        uses: amondnet/vercel-action@v25
-        with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          working-directory: ./server
-          vercel-args: '--prod'
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-
-      - name: Notify if Vercel Secrets Missing
-        if: ${{ env.VERCEL_TOKEN == '' }}
-        run: |
-          echo "::notice title=Vercel Deployment Notice::To enable automatic Vercel backend deployment, add VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID to your GitHub Repository Secrets."
-        env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-
-  # -----------------------------------------------------------
-  # 3. Deployment: Frontend to GitHub Pages
-  # -----------------------------------------------------------
-  deploy-frontend-ghpages:
-    name: Deploy Frontend to GitHub Pages
-    needs: [frontend-check]
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
 
@@ -128,11 +43,20 @@ jobs:
         run: npm run build
 
       - name: Upload GitHub Pages Artifact
+        if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:
           path: ./client/out
 
+  deploy:
+    name: Deploy Frontend to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    if: (github.event_name == 'push' || github.event_name == 'workflow_dispatch') && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
