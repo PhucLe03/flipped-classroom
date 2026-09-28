@@ -4,8 +4,8 @@ const basePath = process.env.NEXT_PUBLIC_BASE_PATH || (isGitHubPages ? '/flipped
 
 const nextConfig = {
   output: 'export',
-  basePath: basePath || undefined,
-  assetPrefix: basePath ? `${basePath}/` : undefined,
+  // basePath: basePath || undefined,
+  // assetPrefix: basePath ? `${basePath}/` : undefined,
   trailingSlash: true,
   reactStrictMode: true,
   images: {
