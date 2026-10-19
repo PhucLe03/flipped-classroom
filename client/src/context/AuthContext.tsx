@@ -14,6 +14,7 @@ interface AuthContextType {
   logout: () => void;
   refreshProfile: () => Promise<void>;
   updateProfile: (data: { fullName?: string; avatar?: string }) => Promise<{ success: boolean; message?: string }>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<{ success: boolean; message?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -141,6 +142,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const changePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      if (!user?.email) {
+        return { success: false, message: 'Chưa xác định thông tin tài khoản' };
+      }
+      const cleanEmail = user.email.toLowerCase().trim();
+      const currentHash = await hashPasswordClient(currentPassword, cleanEmail);
+      const newHash = await hashPasswordClient(newPassword, cleanEmail);
+
+      const res = await api.put<ApiResponse>('/auth/change-password', {
+        currentPassword: currentHash,
+        newPassword: newHash,
+      });
+
+      if (res.data.success) {
+        return { success: true, message: res.data.message };
+      }
+      return { success: false, message: res.data.message || 'Đổi mật khẩu không thành công' };
+    } catch (err: any) {
+      return {
+        success: false,
+        message: err.response?.data?.message || 'Có lỗi xảy ra khi đổi mật khẩu',
+      };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -152,6 +179,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         logout,
         refreshProfile,
         updateProfile,
+        changePassword,
       }}
     >
       {children}

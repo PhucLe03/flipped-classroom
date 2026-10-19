@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User, IUser } from '../models/User';
 import { AuthRequest } from '../middlewares/auth';
-import { verifyPassword } from '../utils/crypto';
+import { verifyPassword, hashPasswordForStorage } from '../utils/crypto';
 import { isValidAvatar, normalizeAvatarId } from '../utils/avatars';
 
 const generateToken = (user: IUser): string => {
@@ -197,3 +197,75 @@ export const updateProfile = async (
     next(error);
   }
 };
+
+export const changePassword = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      res.status(401).json({ success: false, message: 'Chưa xác thực' });
+      return;
+    }
+
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      res.status(400).json({
+        success: false,
+        message: 'Vui lòng cung cấp mật khẩu hiện tại và mật khẩu mới',
+      });
+      return;
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      res.status(404).json({ success: false, message: 'Người dùng không tìm thấy' });
+      return;
+    }
+
+    // 1. Xác thực mật khẩu hiện tại
+    const isMatch = await verifyPassword(currentPassword, user.passwordHash, user.email);
+    if (!isMatch) {
+      res.status(400).json({
+        success: false,
+        message: 'Mật khẩu hiện tại không chính xác',
+      });
+      return;
+    }
+
+    // 2. Kiểm tra mật khẩu mới không được trùng mật khẩu cũ
+    const isSamePassword = await verifyPassword(newPassword, user.passwordHash, user.email);
+    if (isSamePassword) {
+      res.status(400).json({
+        success: false,
+        message: 'Mật khẩu mới không được trùng với mật khẩu hiện tại',
+      });
+      return;
+    }
+
+    // 3. Kiểm tra độ dài mật khẩu mới (nếu gửi dạng thô thì tối thiểu 6 ký tự)
+    const isClientHash = /^[a-f0-9]{64}$/i.test(newPassword);
+    if (!isClientHash && newPassword.length < 6) {
+      res.status(400).json({
+        success: false,
+        message: 'Mật khẩu mới phải có ít nhất 6 ký tự',
+      });
+      return;
+    }
+
+    // 4. Băm mật khẩu mới và lưu vào cơ sở dữ liệu
+    const newPasswordHash = await hashPasswordForStorage(newPassword, user.email);
+    user.passwordHash = newPasswordHash;
+    await user.save();
+
+    res.json({
+      success: true,
+      message: 'Đổi mật khẩu thành công. Vui lòng ghi nhớ mật khẩu mới của bạn.',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
