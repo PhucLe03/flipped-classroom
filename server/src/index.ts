@@ -11,6 +11,7 @@ import authRoutes from './routes/authRoutes';
 import categoryRoutes from './routes/categoryRoutes';
 import materialRoutes from './routes/materialRoutes';
 import adminRoutes from './routes/adminRoutes';
+import commentRoutes from './routes/commentRoutes';
 
 dotenv.config();
 
@@ -63,6 +64,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/materials', materialRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Error Handling
 app.use(errorHandler);

@@ -31,7 +31,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="vi" className={beVietnamPro.variable}>
-      <body className="flex min-h-screen flex-col font-sans bg-slate-50 text-slate-900">
+      <body className="flex min-h-screen flex-col font-sans text-slate-900 selection:bg-brand-blue-light selection:text-brand-blue-dark">
         <AuthProvider>
           <Navbar />
           <main className="flex-1">{children}</main>

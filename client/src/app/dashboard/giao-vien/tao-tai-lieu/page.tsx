@@ -93,26 +93,26 @@ export default function CreateMaterialPage() {
 
   return (
     <ProtectedRoute allowedRoles={['teacher', 'admin']}>
-      <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
+      <div className="min-h-screen py-8 sm:py-12">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           {/* Header & Back */}
           <div className="mb-6 flex items-center justify-between">
             <Link
               href="/dashboard/giao-vien"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-brand-blue transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white/80 backdrop-blur border border-white/60 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-brand-blue shadow-xs transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Quay lại Dashboard</span>
             </Link>
 
-            <span className="text-sm text-slate-500 font-medium">
+            <span className="text-xs sm:text-sm text-slate-600 font-semibold rounded-full bg-white/70 backdrop-blur px-3 py-1 border border-white/50">
               Chế độ tạo bài học đảo ngược
             </span>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Main Info Card */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-6 sm:p-8 shadow-sm">
               <h2 className="text-xl font-bold text-slate-900 mb-1">
                 Thông tin chung về bài học
               </h2>
@@ -238,7 +238,7 @@ export default function CreateMaterialPage() {
             </div>
 
             {/* Dynamic Content Block Manager */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-6 sm:p-8 shadow-sm">
               <BlockManager blocks={blocks} onChange={setBlocks} />
             </div>
 

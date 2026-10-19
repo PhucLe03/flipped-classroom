@@ -18,6 +18,9 @@ const config: Config = {
           'yellow-hover': '#e6bd35',
         },
       },
+      backgroundImage: {
+        'rare-wind': 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)',
+      },
       fontFamily: {
         sans: ['var(--font-be-vietnam-pro)', 'sans-serif'],
       },

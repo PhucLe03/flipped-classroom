@@ -15,7 +15,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, index }) =>
 
   if (block.type === 'youtube') {
     return (
-      <div className="my-6 rounded-2xl border border-slate-200 bg-white p-4 sm:p-6 shadow-sm">
+      <div className="my-6 rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-4 sm:p-6 shadow-md">
         {block.title && (
           <div className="mb-3 flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-100 text-red-600">
@@ -52,7 +52,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, index }) =>
 
   if (block.type === 'gdrive') {
     return (
-      <div className="my-6 rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/50 to-white p-5 sm:p-7 shadow-sm">
+      <div className="my-6 rounded-3xl border border-amber-200/90 bg-white/95 backdrop-blur-md p-5 sm:p-7 shadow-md">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-amber-100">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-400/20 text-amber-700 shrink-0">
@@ -114,7 +114,7 @@ export const BlockRenderer: React.FC<BlockRendererProps> = ({ block, index }) =>
 
   // Rich Text block
   return (
-    <div className="my-6 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+    <div className="my-6 rounded-3xl border border-white/70 bg-white/95 backdrop-blur-md p-6 sm:p-8 shadow-md">
       {block.title && (
         <div className="mb-4 flex items-center gap-2.5 border-b border-slate-100 pb-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-100 text-brand-blue">

@@ -4,9 +4,9 @@ import { GraduationCap, ArrowRight, CheckCircle2, Video, FileText, FolderOpen } 
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-slate-50 py-12">
+    <div className="min-h-screen py-12">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 sm:p-12 shadow-sm">
+        <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-8 sm:p-12 shadow-xl">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-blue text-brand-yellow shadow-md mb-4">
             <GraduationCap className="h-7 w-7 stroke-[2.5]" />
           </div>

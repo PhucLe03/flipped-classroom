@@ -3,6 +3,8 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User, IUser } from '../models/User';
 import { AuthRequest } from '../middlewares/auth';
+import { verifyPassword } from '../utils/crypto';
+import { isValidAvatar, normalizeAvatarId } from '../utils/avatars';
 
 const generateToken = (user: IUser): string => {
   return jwt.sign(
@@ -18,51 +20,10 @@ export const register = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { fullName, email, password, role } = req.body;
-
-    if (!fullName || !email || !password) {
-      res.status(400).json({
-        success: false,
-        message: 'Vui lòng cung cấp đầy đủ họ tên, email và mật khẩu',
-      });
-      return;
-    }
-
-    const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
-    if (existingUser) {
-      res.status(400).json({
-        success: false,
-        message: 'Email này đã được đăng ký trong hệ thống',
-      });
-      return;
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash(password, salt);
-
-    // Default to student unless teacher is explicitly requested (Admin accounts should be seeded)
-    const assignedRole = role === 'teacher' ? 'teacher' : 'student';
-
-    const user = await User.create({
-      fullName,
-      email: email.toLowerCase().trim(),
-      passwordHash,
-      role: assignedRole,
-    });
-
-    const token = generateToken(user);
-
-    res.status(201).json({
-      success: true,
-      message: 'Đăng ký tài khoản thành công',
-      token,
-      user: {
-        id: user._id,
-        fullName: user.fullName,
-        email: user.email,
-        role: user.role,
-        avatar: user.avatar,
-      },
+    // Vô hiệu hóa đăng ký công khai: chỉ Quản trị viên mới có quyền tạo tài khoản
+    res.status(403).json({
+      success: false,
+      message: 'Tính năng đăng ký công khai đã bị khóa. Toàn bộ tài khoản Giáo viên và Học sinh được cấp độc quyền bởi Quản trị viên.',
     });
   } catch (error) {
     next(error);
@@ -80,16 +41,27 @@ export const login = async (
     if (!email || !password) {
       res.status(400).json({
         success: false,
-        message: 'Vui lòng nhập email và mật khẩu',
+        message: 'Vui lòng nhập địa chỉ Gmail và mật khẩu',
       });
       return;
     }
 
-    const user = await User.findOne({ email: email.toLowerCase().trim() });
+    const cleanEmail = email.toLowerCase().trim();
+
+    // Bắt buộc đăng nhập bằng tài khoản Gmail
+    if (!cleanEmail.endsWith('@gmail.com')) {
+      res.status(400).json({
+        success: false,
+        message: 'Hệ thống yêu cầu đăng nhập bằng tài khoản Gmail (@gmail.com)',
+      });
+      return;
+    }
+
+    const user = await User.findOne({ email: cleanEmail });
     if (!user) {
       res.status(401).json({
         success: false,
-        message: 'Email hoặc mật khẩu không chính xác',
+        message: 'Tài khoản Gmail hoặc mật khẩu không chính xác',
       });
       return;
     }
@@ -102,11 +74,12 @@ export const login = async (
       return;
     }
 
-    const isMatch = await bcrypt.compare(password, user.passwordHash);
+    // Xác thực mật khẩu thông qua cơ chế verifyPassword bảo mật 2 lớp
+    const isMatch = await verifyPassword(password, user.passwordHash, cleanEmail);
     if (!isMatch) {
       res.status(401).json({
         success: false,
-        message: 'Email hoặc mật khẩu không chính xác',
+        message: 'Tài khoản Gmail hoặc mật khẩu không chính xác',
       });
       return;
     }
@@ -173,16 +146,37 @@ export const updateProfile = async (
 
     const { fullName, avatar, bio, phone } = req.body;
 
+    if (fullName !== undefined) {
+      const cleanName = typeof fullName === 'string' ? fullName.trim().replace(/\s+/g, ' ') : '';
+      if (cleanName.length < 2 || cleanName.length > 100) {
+        res.status(400).json({ success: false, message: 'Họ và tên phải từ 2 đến 100 ký tự' });
+        return;
+      }
+      if (/[<>]/.test(cleanName)) {
+        res.status(400).json({ success: false, message: 'Họ và tên chứa ký tự không hợp lệ' });
+        return;
+      }
+    }
+
+    // Chỉ chấp nhận avatar trong danh sách có sẵn
+    if (avatar !== undefined && !isValidAvatar(avatar)) {
+      res.status(400).json({ success: false, message: 'Avatar không hợp lệ. Vui lòng chọn từ danh sách có sẵn.' });
+      return;
+    }
+
     const user = await User.findById(req.user._id);
     if (!user) {
       res.status(404).json({ success: false, message: 'Người dùng không tìm thấy' });
       return;
     }
 
-    if (fullName) user.fullName = fullName;
-    if (avatar !== undefined) user.avatar = avatar;
-    if (bio !== undefined) user.bio = bio;
-    if (phone !== undefined) user.phone = phone;
+    if (fullName !== undefined) user.fullName = fullName.trim().replace(/\s+/g, ' ');
+    if (avatar !== undefined) {
+      const cleanId = normalizeAvatarId(avatar);
+      user.avatar = cleanId || undefined;
+    }
+    if (bio !== undefined) user.bio = String(bio).slice(0, 500);
+    if (phone !== undefined) user.phone = String(phone).slice(0, 20);
 
     await user.save();
 

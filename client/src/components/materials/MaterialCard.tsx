@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { StudyMaterial, Category, User } from '@/types';
 import { Video, FileText, FolderOpen, Eye, Clock, User as UserIcon } from 'lucide-react';
+import UserAvatar from '@/components/user/UserAvatar';
 
 interface MaterialCardProps {
   material: StudyMaterial;
@@ -27,7 +28,7 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
   return (
     <Link
       href={`/tai-lieu/chi-tiet?slug=${encodeURIComponent(material.slug)}`}
-      className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-brand-blue-light hover:shadow-lg"
+      className="group flex flex-col overflow-hidden rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md shadow-sm transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-blue-light hover:shadow-xl"
     >
       {/* Cover / Image Area */}
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-gradient-to-br from-brand-blue to-sky-700">
@@ -94,17 +95,7 @@ export const MaterialCard: React.FC<MaterialCardProps> = ({ material }) => {
         {/* Author & Stats Footer */}
         <div className="border-t border-slate-100 pt-3.5 flex items-center justify-between text-xs text-slate-500">
           <div className="flex items-center gap-2.5">
-            {author?.avatar ? (
-              <img
-                src={author.avatar}
-                alt={author.fullName}
-                className="h-7 w-7 rounded-full object-cover"
-              />
-            ) : (
-              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-blue-light/30 text-brand-blue font-bold text-xs">
-                {author?.fullName ? author.fullName.charAt(0) : 'G'}
-              </div>
-            )}
+            <UserAvatar avatar={author?.avatar} name={author?.fullName || 'G'} size={28} />
             <span className="font-semibold text-slate-800 truncate max-w-[130px] text-xs sm:text-sm">
               {author?.fullName || 'Giáo viên'}
             </span>

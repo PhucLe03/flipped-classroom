@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, ApiResponse } from '@/types';
 import { api } from '@/lib/api';
+import { hashPasswordClient } from '@/lib/crypto';
 
 interface AuthContextType {
   user: User | null;
@@ -12,6 +13,7 @@ interface AuthContextType {
   register: (fullName: string, email: string, password: string, role?: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
   refreshProfile: () => Promise<void>;
+  updateProfile: (data: { fullName?: string; avatar?: string }) => Promise<{ success: boolean; message?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -54,7 +56,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string) => {
     try {
-      const res = await api.post<ApiResponse>('/auth/login', { email, password });
+      const cleanEmail = email.toLowerCase().trim();
+      // Băm mật khẩu phía Client trước khi gửi ra mạng
+      const clientHash = await hashPasswordClient(password, cleanEmail);
+
+      const res = await api.post<ApiResponse>('/auth/login', {
+        email: cleanEmail,
+        password: clientHash,
+      });
+
       if (res.data.success && res.data.token && res.data.user) {
         localStorage.setItem('fc_token', res.data.token);
         localStorage.setItem('fc_user', JSON.stringify(res.data.user));
@@ -73,10 +83,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const register = async (fullName: string, email: string, password: string, role?: string) => {
     try {
+      const cleanEmail = email.toLowerCase().trim();
+      const clientHash = await hashPasswordClient(password, cleanEmail);
       const res = await api.post<ApiResponse>('/auth/register', {
         fullName,
-        email,
-        password,
+        email: cleanEmail,
+        password: clientHash,
         role: role || 'student',
       });
       if (res.data.success && res.data.token && res.data.user) {
@@ -100,7 +112,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     localStorage.removeItem('fc_user');
     setUser(null);
     setToken(null);
-    window.location.href = '/flipped-classroom/dang-nhap';
+    window.location.href = '/dang-nhap';
   };
 
   const refreshProfile = async () => {
@@ -115,6 +127,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const updateProfile = async (data: { fullName?: string; avatar?: string }) => {
+    try {
+      const res = await api.put<ApiResponse>('/auth/profile', data);
+      if (res.data.success && res.data.user) {
+        setUser(res.data.user);
+        localStorage.setItem('fc_user', JSON.stringify(res.data.user));
+        return { success: true, message: res.data.message };
+      }
+      return { success: false, message: res.data.message || 'Cập nhật không thành công' };
+    } catch (err: any) {
+      return { success: false, message: err.response?.data?.message || 'Cập nhật không thành công' };
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -125,6 +151,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         logout,
         refreshProfile,
+        updateProfile,
       }}
     >
       {children}

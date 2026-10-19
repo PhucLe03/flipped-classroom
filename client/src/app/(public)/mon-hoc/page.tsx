@@ -43,7 +43,7 @@ export default function SubjectsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-50 py-12">
+    <div className="min-h-screen py-12">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-2xl mx-auto mb-12">
           <span className="text-xs font-bold uppercase tracking-wider text-brand-blue mb-1 block">
@@ -62,7 +62,7 @@ export default function SubjectsPage() {
             <Link
               key={sub.slug}
               href={`/tai-lieu?subject=${sub.slug}`}
-              className="group flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 sm:p-7 shadow-sm hover:border-brand-blue-light hover:shadow-lg transition-all"
+              className="group flex flex-col justify-between rounded-3xl border border-white/70 bg-white/90 backdrop-blur-md p-6 sm:p-7 shadow-sm hover:border-brand-blue-light hover:shadow-xl hover:bg-white/95 transition-all"
             >
               <div>
                 <div className={`h-12 w-12 rounded-2xl bg-gradient-to-tr ${sub.color} flex items-center justify-center text-white shadow-md mb-4 group-hover:scale-105 transition-transform`}>

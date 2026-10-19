@@ -9,10 +9,14 @@
     --brand-blue-light: #8ACFF8;
     --brand-yellow: #FFD444;
     --brand-yellow-light: #F4EB6C;
+    --gradient-rare-wind: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
   }
 
   body {
-    @apply bg-slate-50 text-slate-900 antialiased text-base;
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    @apply text-slate-900 antialiased text-base;
     font-size: 16px;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
@@ -21,6 +25,33 @@
     background-color: #8ACFF8;
     color: #004c78;
   }
+}
+
+.glass-card {
+  background-color: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+}
+
+.glass-header {
+  background-color: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Hiệu ứng "pop" khi chọn avatar mới */
+@keyframes avatar-pop {
+  0% { transform: scale(0.7); opacity: 0.4; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+.animate-avatar-pop {
+  animation: avatar-pop 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-avatar-pop { animation: none; }
 }
 
 /* TipTap Editor & Prose Content Styling - Enhanced Readability */

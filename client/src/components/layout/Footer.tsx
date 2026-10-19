@@ -4,7 +4,7 @@ import { GraduationCap, Mail, Phone, MapPin, Heart } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="border-t border-slate-200 bg-white pt-12 pb-8">
+    <footer className="border-t border-white/60 bg-white/85 backdrop-blur-md pt-12 pb-8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
           {/* Col 1: Platform Info */}

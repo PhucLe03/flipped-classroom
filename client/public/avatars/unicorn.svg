@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="g_unicorn" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f9a8d4" />
+      <stop offset="100%" stop-color="#a855f7" />
+    </linearGradient>
+    <radialGradient id="glow_unicorn" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.35" />
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <!-- Background Circle with Gradient -->
+  <circle cx="60" cy="60" r="58" fill="url(#g_unicorn)" stroke="#ffffff" stroke-width="2" />
+  <!-- Glossy Highlight -->
+  <circle cx="60" cy="60" r="58" fill="url(#glow_unicorn)" />
+  <!-- Emoji Graphic -->
+  <text x="60" y="66" font-size="58" text-anchor="middle" dominant-baseline="central" font-family="'Segoe UI Emoji', 'Apple Color Emoji', 'Noto Color Emoji', sans-serif">
+    🦄
+  </text>
+</svg>

@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import ProtectedRoute from '@/components/layout/ProtectedRoute';
 import BlockRenderer from '@/components/materials/BlockRenderer';
+import DiscussionSection from '@/components/materials/DiscussionSection';
+import UserAvatar from '@/components/user/UserAvatar';
 import { StudyMaterial, Category, User, ApiResponse } from '@/types';
 import { api } from '@/lib/api';
 import {
@@ -90,13 +92,13 @@ export default function MaterialDetailClient({ slug: propSlug }: MaterialDetailC
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
+      <div className="min-h-screen py-8 sm:py-12">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           {/* Back link */}
           <div className="mb-6 flex items-center justify-between">
             <Link
               href="/tai-lieu"
-              className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-brand-blue"
+              className="inline-flex items-center gap-2 rounded-xl bg-white/80 backdrop-blur border border-white/60 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-brand-blue shadow-xs transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Quay lại kho học liệu</span>
@@ -104,7 +106,7 @@ export default function MaterialDetailClient({ slug: propSlug }: MaterialDetailC
 
             <button
               onClick={handleShare}
-              className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs hover:bg-slate-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-white/60 bg-white/80 backdrop-blur px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-700 shadow-xs hover:bg-white"
             >
               {copied ? (
                 <>
@@ -121,7 +123,7 @@ export default function MaterialDetailClient({ slug: propSlug }: MaterialDetailC
           </div>
 
           {/* Article Header Card */}
-          <article className="overflow-hidden rounded-3xl border border-slate-200 bg-white p-6 sm:p-10 shadow-sm mb-8">
+          <article className="overflow-hidden rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-6 sm:p-10 shadow-md mb-8">
             {/* Badges */}
             <div className="flex flex-wrap items-center gap-2 mb-5">
               {subject && (
@@ -153,17 +155,7 @@ export default function MaterialDetailClient({ slug: propSlug }: MaterialDetailC
             <div className="flex flex-wrap items-center justify-between gap-4 border-t border-slate-100 pt-6">
               {/* Author Info */}
               <div className="flex items-center gap-3.5">
-                {author?.avatar ? (
-                  <img
-                    src={author.avatar}
-                    alt={author.fullName}
-                    className="h-11 w-11 rounded-full object-cover border border-slate-200"
-                  />
-                ) : (
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-blue text-white font-bold text-base">
-                    {author?.fullName ? author.fullName.charAt(0) : 'G'}
-                  </div>
-                )}
+                <UserAvatar avatar={author?.avatar} name={author?.fullName || 'G'} size={44} />
                 <div>
                   <h4 className="text-sm sm:text-base font-bold text-slate-900">
                     {author?.fullName || 'Giáo viên'}
@@ -202,6 +194,9 @@ export default function MaterialDetailClient({ slug: propSlug }: MaterialDetailC
               </div>
             )}
           </div>
+
+          {/* Diễn đàn Thảo luận Bài học 2 Cấp (Comments & Thread Replies) */}
+          <DiscussionSection materialId={material._id} />
 
           {/* Bottom Footer Guidance */}
           <div className="mt-10 rounded-2xl bg-amber-50 border border-amber-200 p-6 sm:p-7">

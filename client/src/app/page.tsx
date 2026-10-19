@@ -73,7 +73,7 @@ export default function HomePage() {
       </section>
 
       {/* 3 Pillars of Flipped Classroom */}
-      <section className="py-20 bg-white border-b border-slate-200">
+      <section className="py-20 bg-white/75 backdrop-blur-md border-b border-white/40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-2xl mx-auto mb-14">
             <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 mb-4">
@@ -85,7 +85,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="rounded-3xl border border-slate-200 bg-slate-50/70 p-7 shadow-xs hover:shadow-md transition-shadow">
+            <div className="rounded-3xl border border-white/80 bg-white/85 backdrop-blur-md p-7 shadow-xs hover:shadow-md transition-shadow">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-brand-blue font-extrabold text-xl mb-5">
                 1
               </div>
@@ -95,7 +95,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-7 shadow-xs hover:shadow-md transition-shadow">
+            <div className="rounded-3xl border border-white/80 bg-white/85 backdrop-blur-md p-7 shadow-xs hover:shadow-md transition-shadow">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-100 text-amber-800 font-extrabold text-xl mb-5">
                 2
               </div>
@@ -105,7 +105,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-slate-50/70 p-7 shadow-xs hover:shadow-md transition-shadow">
+            <div className="rounded-3xl border border-white/80 bg-white/85 backdrop-blur-md p-7 shadow-xs hover:shadow-md transition-shadow">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 font-extrabold text-xl mb-5">
                 3
               </div>
@@ -119,7 +119,7 @@ export default function HomePage() {
       </section>
 
       {/* Featured Subjects Section */}
-      <section className="py-20 bg-slate-50">
+      <section className="py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12">
             <div>
@@ -144,7 +144,7 @@ export default function HomePage() {
               <Link
                 key={sub.slug}
                 href={`/tai-lieu?subject=${sub.slug}`}
-                className="group flex flex-col items-center text-center p-6 rounded-3xl bg-white border border-slate-200 shadow-sm hover:border-brand-blue-light hover:shadow-md transition-all duration-200"
+                className="group flex flex-col items-center text-center p-6 rounded-3xl bg-white/85 backdrop-blur-md border border-white/80 shadow-sm hover:border-brand-blue-light hover:shadow-md transition-all duration-200"
               >
                 <div className={`h-16 w-16 rounded-2xl bg-gradient-to-tr ${sub.color} flex items-center justify-center text-white shadow-md mb-4 group-hover:scale-110 transition-transform`}>
                   <BookOpen className="h-7 w-7" />
@@ -162,7 +162,7 @@ export default function HomePage() {
       </section>
 
       {/* Multi-Format Content Showcase */}
-      <section className="py-20 bg-white border-t border-slate-200">
+      <section className="py-20 bg-white/80 backdrop-blur-md border-t border-white/50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
             <div>
@@ -220,7 +220,7 @@ export default function HomePage() {
             </div>
 
             {/* Visual Demo Card */}
-            <div className="rounded-3xl border border-slate-200 bg-slate-900 p-6 text-white shadow-2xl">
+            <div className="rounded-3xl border border-white/60 bg-slate-900/95 backdrop-blur-md p-6 text-white shadow-2xl">
               <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
                 <div className="flex items-center gap-2">
                   <div className="h-3 w-3 rounded-full bg-red-500" />

@@ -128,13 +128,13 @@ export default function EditMaterialClient({ id: propId }: EditMaterialClientPro
 
   return (
     <ProtectedRoute allowedRoles={['teacher', 'admin']}>
-      <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
+      <div className="min-h-screen py-8 sm:py-12">
         <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
           {/* Header & Back */}
           <div className="mb-6 flex items-center justify-between">
             <Link
               href="/dashboard/giao-vien"
-              className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-brand-blue transition-colors"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-white/80 backdrop-blur border border-white/60 px-3.5 py-2 text-sm font-semibold text-slate-700 hover:text-brand-blue shadow-xs transition-colors"
             >
               <ArrowLeft className="h-4 w-4" />
               <span>Quay lại Dashboard</span>
@@ -144,7 +144,7 @@ export default function EditMaterialClient({ id: propId }: EditMaterialClientPro
               <Link
                 href={`/tai-lieu/chi-tiet?slug=${material.slug}`}
                 target="_blank"
-                className="inline-flex items-center gap-1 text-sm font-semibold text-brand-blue hover:underline"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-white/80 backdrop-blur border border-white/60 px-3.5 py-2 text-sm font-semibold text-brand-blue hover:text-brand-blue-dark shadow-xs"
               >
                 <span>Xem trang công khai</span>
                 <ExternalLink className="h-4 w-4" />
@@ -153,7 +153,7 @@ export default function EditMaterialClient({ id: propId }: EditMaterialClientPro
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-6 sm:p-8 shadow-sm">
               <h2 className="text-xl font-bold text-slate-900 mb-1">
                 Chỉnh sửa bài học
               </h2>
@@ -276,15 +276,15 @@ export default function EditMaterialClient({ id: propId }: EditMaterialClientPro
             </div>
 
             {/* Dynamic Content Block Manager */}
-            <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-6 sm:p-8 shadow-sm">
               <BlockManager blocks={blocks} onChange={setBlocks} />
             </div>
 
             {/* Submit Action Footer */}
-            <div className="flex items-center justify-end gap-3 sticky bottom-4 bg-white/90 backdrop-blur p-4 rounded-2xl border border-slate-200 shadow-xl">
+            <div className="flex items-center justify-end gap-3 sticky bottom-4 bg-white/92 backdrop-blur-md p-4 rounded-2xl border border-white/70 shadow-xl">
               <Link
                 href="/dashboard/giao-vien"
-                className="rounded-xl border border-slate-300 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"
+                className="rounded-xl border border-slate-300 bg-white/80 px-6 py-3 text-sm font-semibold text-slate-700 hover:bg-white"
               >
                 Hủy bỏ
               </Link>

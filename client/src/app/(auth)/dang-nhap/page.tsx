@@ -4,7 +4,7 @@ import React, { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { GraduationCap, Lock, Mail, Loader2, AlertCircle, Sparkles } from 'lucide-react';
+import { GraduationCap, Lock, Mail, Loader2, AlertCircle } from 'lucide-react';
 
 function LoginForm() {
   const router = useRouter();
@@ -32,23 +32,9 @@ function LoginForm() {
     }
   };
 
-  const handleDemoLogin = async (demoEmail: string) => {
-    setEmail(demoEmail);
-    setPassword('123456');
-    setLoading(true);
-    setErrorMessage('');
-    const res = await login(demoEmail, '123456');
-    setLoading(false);
-    if (res.success) {
-      router.push(redirectPath);
-    } else {
-      setErrorMessage(res.message || 'Đăng nhập không thành công');
-    }
-  };
-
   return (
     <div className="flex min-h-[85vh] items-center justify-center px-4 py-12 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8 rounded-3xl border border-slate-200 bg-white p-8 sm:p-10 shadow-xl">
+      <div className="w-full max-w-md space-y-8 rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-8 sm:p-10 shadow-2xl">
         {/* Header */}
         <div className="text-center">
           <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-blue text-brand-yellow shadow-md mb-3">
@@ -58,7 +44,7 @@ function LoginForm() {
             Đăng nhập tài khoản
           </h2>
           <p className="mt-2 text-sm text-slate-600">
-            Vui lòng đăng nhập để truy cập kho tài liệu học tập
+            Vui lòng đăng nhập bằng tài khoản Gmail của bạn
           </p>
         </div>
 
@@ -74,7 +60,7 @@ function LoginForm() {
         <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
           <div>
             <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-              Địa chỉ Email
+              Địa chỉ Gmail
             </label>
             <div className="relative">
               <Mail className="absolute left-3.5 top-3.5 h-5 w-5 text-slate-400" />
@@ -83,10 +69,13 @@ function LoginForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@example.com"
+                placeholder="example@gmail.com"
                 className="w-full rounded-xl border border-slate-300 py-3 pl-11 pr-4 text-base text-slate-900 placeholder:text-slate-400 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
               />
             </div>
+            <p className="mt-1 text-xs text-slate-500">
+              * Hệ thống chỉ chấp nhận tài khoản có đuôi <strong>@gmail.com</strong>
+            </p>
           </div>
 
           <div>
@@ -114,7 +103,7 @@ function LoginForm() {
             {loading ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
-                <span>Đang xử lý...</span>
+                <span>Đang bảo mật & đăng nhập...</span>
               </>
             ) : (
               <span>Đăng nhập</span>
@@ -122,42 +111,11 @@ function LoginForm() {
           </button>
         </form>
 
-        {/* Demo Accounts Helper */}
-        <div className="rounded-2xl border border-amber-200 bg-amber-50/70 p-4">
-          <div className="flex items-center gap-1.5 mb-2.5 text-sm font-bold text-amber-900">
-            <Sparkles className="h-4 w-4 text-amber-600" />
-            <span>Tài khoản thử nghiệm nhanh (Mật khẩu: 123456)</span>
-          </div>
-          <div className="grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('hocsinh@flippedclassroom.edu.vn')}
-              className="rounded-lg bg-white border border-amber-300 px-2 py-2 text-xs sm:text-sm font-semibold text-slate-800 hover:bg-amber-100/50 shadow-xs"
-            >
-              Học sinh
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('thaynam.toan@flippedclassroom.edu.vn')}
-              className="rounded-lg bg-white border border-amber-300 px-2 py-2 text-xs sm:text-sm font-semibold text-slate-800 hover:bg-amber-100/50 shadow-xs"
-            >
-              Giáo viên
-            </button>
-            <button
-              type="button"
-              onClick={() => handleDemoLogin('admin@flippedclassroom.edu.vn')}
-              className="rounded-lg bg-white border border-amber-300 px-2 py-2 text-xs sm:text-sm font-semibold text-slate-800 hover:bg-amber-100/50 shadow-xs"
-            >
-              Quản trị
-            </button>
-          </div>
-        </div>
-
-        {/* Switch to Register */}
-        <div className="text-center text-sm text-slate-600">
+        {/* Registration Notice */}
+        <div className="text-center text-xs text-slate-500 rounded-xl bg-slate-50 p-3 border border-slate-200">
           Chưa có tài khoản?{' '}
-          <Link href="/dang-ky" className="font-bold text-brand-blue hover:underline">
-            Đăng ký ngay
+          <Link href="/dang-ky" className="font-semibold text-brand-blue hover:underline">
+            Tài khoản chỉ do Quản trị viên cấp
           </Link>
         </div>
       </div>

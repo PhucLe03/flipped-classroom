@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { User } from '../models/User';
 import { StudyMaterial } from '../models/StudyMaterial';
 import { Category } from '../models/Category';
+import { hashPasswordForStorage } from '../utils/crypto';
 
 export const getPlatformStats = async (
   req: Request,
@@ -200,3 +201,97 @@ export const getAllMaterialsAdmin = async (
     next(error);
   }
 };
+
+export const createUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { fullName, email, password, role } = req.body;
+
+    if (!fullName || !email || !password) {
+      res.status(400).json({
+        success: false,
+        message: 'Vui lòng cung cấp đầy đủ họ tên, Gmail và mật khẩu khởi tạo',
+      });
+      return;
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    if (!cleanEmail.endsWith('@gmail.com')) {
+      res.status(400).json({
+        success: false,
+        message: 'Địa chỉ email bắt buộc phải có định dạng Gmail (@gmail.com)',
+      });
+      return;
+    }
+
+    const existingUser = await User.findOne({ email: cleanEmail });
+    if (existingUser) {
+      res.status(400).json({
+        success: false,
+        message: 'Địa chỉ Gmail này đã tồn tại trong hệ thống',
+      });
+      return;
+    }
+
+    const validRole = ['student', 'teacher', 'admin'].includes(role) ? role : 'student';
+    const passwordHash = await hashPasswordForStorage(password, cleanEmail);
+
+    const user = await User.create({
+      fullName: fullName.trim(),
+      email: cleanEmail,
+      passwordHash,
+      role: validRole,
+      isActive: true,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: `Tạo tài khoản ${validRole === 'teacher' ? 'Giáo viên' : validRole === 'admin' ? 'Quản trị viên' : 'Học sinh'} thành công`,
+      data: {
+        id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+
+    if (!user) {
+      res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+      return;
+    }
+
+    // Không cho phép tự xóa tài khoản admin gốc
+    if (user.email === 'hailua112003@gmail.com') {
+      res.status(400).json({ success: false, message: 'Không thể xóa tài khoản Quản trị viên tối cao của hệ thống' });
+      return;
+    }
+
+    await User.findByIdAndDelete(id);
+
+    res.json({
+      success: true,
+      message: `Đã xóa tài khoản ${user.fullName} (${user.email}) khỏi hệ thống`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

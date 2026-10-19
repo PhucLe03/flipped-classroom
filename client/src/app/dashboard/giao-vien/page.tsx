@@ -83,7 +83,7 @@ export default function TeacherDashboardPage() {
 
   return (
     <ProtectedRoute allowedRoles={['teacher', 'admin']}>
-      <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
+      <div className="min-h-screen py-8 sm:py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Dashboard Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -107,7 +107,7 @@ export default function TeacherDashboardPage() {
 
           {/* Metrics Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
+            <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-5 shadow-sm">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-semibold text-slate-600">Tổng số tài liệu</span>
                 <BookOpen className="h-5 w-5 text-brand-blue" />
@@ -115,7 +115,7 @@ export default function TeacherDashboardPage() {
               <p className="text-3xl font-extrabold text-slate-900">{metrics.totalMaterials}</p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
+            <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-5 shadow-sm">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-semibold text-slate-600">Đã xuất bản</span>
                 <FileCheck className="h-5 w-5 text-emerald-600" />
@@ -123,7 +123,7 @@ export default function TeacherDashboardPage() {
               <p className="text-3xl font-extrabold text-emerald-600">{metrics.published}</p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
+            <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-5 shadow-sm">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-semibold text-slate-600">Bản nháp</span>
                 <Clock className="h-5 w-5 text-amber-500" />
@@ -131,7 +131,7 @@ export default function TeacherDashboardPage() {
               <p className="text-3xl font-extrabold text-amber-600">{metrics.drafts}</p>
             </div>
 
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-xs">
+            <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-5 shadow-sm">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-semibold text-slate-600">Tổng lượt xem</span>
                 <Eye className="h-5 w-5 text-indigo-600" />
@@ -141,7 +141,7 @@ export default function TeacherDashboardPage() {
           </div>
 
           {/* Materials Table */}
-          <div className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden">
+          <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md shadow-sm overflow-hidden">
             <div className="border-b border-slate-100 p-5 sm:p-6 flex items-center justify-between">
               <h3 className="text-base sm:text-lg font-bold text-slate-900">
                 Danh sách bài học của bạn ({materials.length})

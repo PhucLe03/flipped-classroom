@@ -58,12 +58,28 @@ export interface StudyMaterial {
   updatedAt: string;
 }
 
+export interface CommentItem {
+  id: string;
+  _id?: string;
+  materialId: string;
+  authorId: User | string;
+  author?: User;
+  parentId?: string | null;
+  content: string;
+  status: 'active' | 'hidden' | 'deleted';
+  createdAt: string;
+  updatedAt: string;
+  replies?: CommentItem[];
+}
+
 export interface ApiResponse<T = any> {
   success: boolean;
   message?: string;
   data?: T;
   token?: string;
   user?: User;
+  totalRoot?: number;
+  totalComments?: number;
   pagination?: {
     page: number;
     limit: number;

@@ -91,10 +91,10 @@ function MaterialsCatalogContent() {
 
   return (
     <ProtectedRoute>
-      <div className="min-h-screen bg-slate-50 py-8 sm:py-12">
+      <div className="min-h-screen py-8 sm:py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Header Banner */}
-          <div className="mb-8 rounded-3xl bg-gradient-to-r from-brand-blue to-sky-700 p-6 sm:p-10 text-white shadow-lg">
+          <div className="mb-8 rounded-3xl bg-gradient-to-r from-brand-blue to-sky-700 p-6 sm:p-10 text-white shadow-xl">
             <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-brand-yellow mb-2 block">
               Thư viện số Flipped Classroom
             </span>
@@ -129,7 +129,7 @@ function MaterialsCatalogContent() {
           </div>
 
           {/* Filter Bar */}
-          <div className="mb-8 space-y-5 rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-sm">
+          <div className="mb-8 space-y-5 rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-5 sm:p-6 shadow-md">
             {/* Subject Buttons */}
             <div>
               <span className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-500 mb-2.5 block">

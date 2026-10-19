@@ -14,7 +14,9 @@ import {
   LayoutDashboard,
   ShieldAlert,
   PlusCircle,
+  UserCog,
 } from 'lucide-react';
+import UserAvatar from '@/components/user/UserAvatar';
 
 const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -36,7 +38,7 @@ const Navbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-slate-200 bg-white/95 backdrop-blur shadow-sm">
+    <header className="sticky top-0 z-40 w-full glass-header shadow-xs">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
@@ -81,9 +83,7 @@ const Navbar: React.FC = () => {
                 onClick={() => setUserDropdownOpen(!userDropdownOpen)}
                 className="flex items-center gap-2.5 rounded-full border border-slate-200 bg-white py-1.5 pl-2 pr-3.5 text-sm font-medium text-slate-700 shadow-sm hover:border-brand-blue-light transition-all focus:outline-none"
               >
-                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-blue text-white font-bold text-sm uppercase">
-                  {user.fullName ? user.fullName.charAt(0) : 'U'}
-                </div>
+                <UserAvatar avatar={user.avatar} name={user.fullName} size={36} />
                 <div className="flex flex-col text-left">
                   <span className="text-sm font-bold text-slate-800 line-clamp-1 max-w-[130px]">
                     {user.fullName}
@@ -108,6 +108,15 @@ const Navbar: React.FC = () => {
                     <p className="text-xs text-slate-500">Đăng nhập với email</p>
                     <p className="text-xs font-semibold text-slate-800 truncate">{user.email}</p>
                   </div>
+
+                  <Link
+                    href="/tai-khoan"
+                    onClick={() => setUserDropdownOpen(false)}
+                    className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium text-slate-700 hover:bg-blue-50 hover:text-brand-blue"
+                  >
+                    <UserCog className="h-4 w-4 text-brand-blue" />
+                    Tùy chỉnh hồ sơ
+                  </Link>
 
                   {user.role === 'teacher' && (
                     <>
@@ -176,20 +185,12 @@ const Navbar: React.FC = () => {
               )}
             </div>
           ) : (
-            <>
-              <Link
-                href="/dang-nhap"
-                className="px-4 py-2 text-sm font-medium text-brand-blue hover:text-brand-blue-dark transition-colors"
-              >
-                Đăng nhập
-              </Link>
-              <Link
-                href="/dang-ky"
-                className="rounded-lg bg-brand-yellow px-4 py-2 text-sm font-bold text-slate-900 shadow-sm hover:bg-brand-yellow-hover transition-all transform active:scale-95"
-              >
-                Đăng ký
-              </Link>
-            </>
+            <Link
+              href="/dang-nhap"
+              className="rounded-lg bg-brand-yellow px-5 py-2 text-sm font-bold text-slate-900 shadow-sm hover:bg-brand-yellow-hover transition-all transform active:scale-95"
+            >
+              Đăng nhập
+            </Link>
           )}
         </div>
 
@@ -228,10 +229,23 @@ const Navbar: React.FC = () => {
           <div className="mt-4 border-t border-slate-200 pt-4">
             {user ? (
               <div className="space-y-2">
-                <div className="px-3 py-2 bg-slate-50 rounded-lg">
-                  <p className="font-semibold text-sm text-slate-800">{user.fullName}</p>
-                  <p className="text-xs text-brand-blue capitalize font-medium">{user.role}</p>
+                <div className="flex items-center gap-3 px-3 py-2 bg-slate-50 rounded-lg">
+                  <UserAvatar avatar={user.avatar} name={user.fullName} size={40} />
+                  <div className="min-w-0">
+                    <p className="font-semibold text-sm text-slate-800 truncate">{user.fullName}</p>
+                    <p className="text-xs text-brand-blue font-medium">
+                      {user.role === 'admin' ? 'Quản trị viên' : user.role === 'teacher' ? 'Giáo viên' : 'Học sinh'}
+                    </p>
+                  </div>
                 </div>
+                <Link
+                  href="/tai-khoan"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 hover:bg-blue-50"
+                >
+                  <UserCog className="h-4 w-4 text-brand-blue" />
+                  Tùy chỉnh hồ sơ
+                </Link>
                 {user.role === 'teacher' && (
                   <Link
                     href="/dashboard/giao-vien"
@@ -266,16 +280,9 @@ const Navbar: React.FC = () => {
                 <Link
                   href="/dang-nhap"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex w-full items-center justify-center rounded-lg border border-slate-300 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                >
-                  Đăng nhập
-                </Link>
-                <Link
-                  href="/dang-ky"
-                  onClick={() => setMobileMenuOpen(false)}
                   className="flex w-full items-center justify-center rounded-lg bg-brand-yellow py-2.5 text-sm font-bold text-slate-900 shadow hover:bg-brand-yellow-hover"
                 >
-                  Đăng ký
+                  Đăng nhập
                 </Link>
               </div>
             )}

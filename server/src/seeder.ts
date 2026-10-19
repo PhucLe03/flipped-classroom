@@ -1,10 +1,11 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
 import dotenv from 'dotenv';
 import { User } from './models/User';
 import { Category } from './models/Category';
 import { StudyMaterial } from './models/StudyMaterial';
+import { Comment } from './models/Comment';
 import { extractYouTubeId, extractGDriveId, generateSlug } from './utils/parsers';
+import { hashPasswordForStorage } from './utils/crypto';
 
 dotenv.config();
 
@@ -12,61 +13,98 @@ const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/flipped_c
 
 export const seedData = async (forceClear = false): Promise<void> => {
   try {
+    // Luôn đảm bảo tài khoản Super Admin hailua112003@gmail.com tồn tại
+    const existingAdmin = await User.findOne({ email: 'hailua112003@gmail.com' });
+    if (!existingAdmin) {
+      const adminPasswordHash = await hashPasswordForStorage('Admin@123456', 'hailua112003@gmail.com');
+      await User.create({
+        fullName: 'Quản Trị Viên (Super Admin)',
+        email: 'hailua112003@gmail.com',
+        passwordHash: adminPasswordHash,
+        role: 'admin',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+        bio: 'Quản trị viên tối cao nền tảng Học Liệu Số Flipped Classroom',
+        isActive: true,
+      });
+      console.log('[Seeder] Super Admin hailua112003@gmail.com created successfully.');
+    }
+
     const userCount = await User.countDocuments();
-    if (!forceClear && userCount > 0) {
+    if (!forceClear && userCount > 1) {
       console.log(`[Seeder] Database already populated with ${userCount} users. Auto-seed skipped.`);
       return;
     }
 
     if (forceClear) {
       console.log('[Seeder] Clearing old collections...');
-      await User.deleteMany({});
+      await User.deleteMany({ email: { $ne: 'hailua112003@gmail.com' } });
       await Category.deleteMany({});
       await StudyMaterial.deleteMany({});
     }
 
-    // 1. Seed Users
-    console.log('[Seeder] Creating sample users...');
-    const salt = await bcrypt.genSalt(10);
-    const passwordHash = await bcrypt.hash('123456', salt);
+    // 1. Seed Users (sử dụng tài khoản Gmail và cơ chế bảo mật hash 2 lớp)
+    console.log('[Seeder] Creating sample Gmail users with 2-layer hash...');
 
-    const admin = await User.create({
-      fullName: 'Quản Trị Viên Hệ Thống',
-      email: 'admin@flippedclassroom.edu.vn',
-      passwordHash,
-      role: 'admin',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-      bio: 'Quản trị viên nền tảng E-Learning Lớp học đảo ngược',
-    });
+    // Đảm bảo admin chính
+    let admin = await User.findOne({ email: 'hailua112003@gmail.com' });
+    if (!admin) {
+      const adminHash = await hashPasswordForStorage('Admin@123456', 'hailua112003@gmail.com');
+      admin = await User.create({
+        fullName: 'Quản Trị Viên (Super Admin)',
+        email: 'hailua112003@gmail.com',
+        passwordHash: adminHash,
+        role: 'admin',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+        bio: 'Quản trị viên tối cao nền tảng Học Liệu Số Flipped Classroom',
+      });
+    }
 
-    const teacherNam = await User.create({
-      fullName: 'Thầy Nguyễn Hải Nam',
-      email: 'thaynam.toan@flippedclassroom.edu.vn',
-      passwordHash,
-      role: 'teacher',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
-      bio: 'Giáo viên Toán Chuyên, 12 năm kinh nghiệm luyện thi THPT Quốc gia',
-    });
+    const teacherNamHash = await hashPasswordForStorage('123456', 'thaynam.toan.fc@gmail.com');
+    const teacherNam = await User.findOneAndUpdate(
+      { email: 'thaynam.toan.fc@gmail.com' },
+      {
+        fullName: 'Thầy Nguyễn Hải Nam',
+        email: 'thaynam.toan.fc@gmail.com',
+        passwordHash: teacherNamHash,
+        role: 'teacher',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150',
+        bio: 'Giáo viên Toán Chuyên, 12 năm kinh nghiệm luyện thi THPT Quốc gia',
+        isActive: true,
+      },
+      { upsert: true, new: true }
+    );
 
-    const teacherLien = await User.create({
-      fullName: 'Cô Trần Mỹ Liên',
-      email: 'colien.ly@flippedclassroom.edu.vn',
-      passwordHash,
-      role: 'teacher',
-      avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150',
-      bio: 'Giáo viên Vật lý, Thạc sĩ Sư phạm Vật lý Ứng dụng',
-    });
+    const teacherLienHash = await hashPasswordForStorage('123456', 'colien.ly.fc@gmail.com');
+    const teacherLien = await User.findOneAndUpdate(
+      { email: 'colien.ly.fc@gmail.com' },
+      {
+        fullName: 'Cô Trần Mỹ Liên',
+        email: 'colien.ly.fc@gmail.com',
+        passwordHash: teacherLienHash,
+        role: 'teacher',
+        avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150',
+        bio: 'Giáo viên Vật lý, Thạc sĩ Sư phạm Vật lý Ứng dụng',
+        isActive: true,
+      },
+      { upsert: true, new: true }
+    );
 
-    const student = await User.create({
-      fullName: 'Nguyễn Văn Minh',
-      email: 'hocsinh@flippedclassroom.edu.vn',
-      passwordHash,
-      role: 'student',
-      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
-      bio: 'Học sinh lớp 12A1',
-    });
+    const studentHash = await hashPasswordForStorage('123456', 'hocsinh.fc@gmail.com');
+    const student = await User.findOneAndUpdate(
+      { email: 'hocsinh.fc@gmail.com' },
+      {
+        fullName: 'Nguyễn Văn Minh',
+        email: 'hocsinh.fc@gmail.com',
+        passwordHash: studentHash,
+        role: 'student',
+        avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150',
+        bio: 'Học sinh lớp 12A1',
+        isActive: true,
+      },
+      { upsert: true, new: true }
+    );
 
-    console.log('[Seeder] Created 4 sample users');
+    console.log('[Seeder] Created/verified sample users successfully');
 
     // 2. Seed Categories
     console.log('[Seeder] Creating categories...');
@@ -254,8 +292,30 @@ export const seedData = async (forceClear = false): Promise<void> => {
       },
     ];
 
-    await StudyMaterial.insertMany(materialsData);
+    const seededMaterials = await StudyMaterial.insertMany(materialsData);
     console.log('[Seeder] Created 3 high-quality study materials with multi-format blocks');
+
+    // 4. Seed sample 2-tier discussion comments
+    const firstMaterial = seededMaterials[0];
+    if (firstMaterial && student && teacherNam) {
+      const rootComment = await Comment.create({
+        materialId: firstMaterial._id,
+        authorId: student._id,
+        parentId: null,
+        content: 'Thưa thầy, ở phút 03:20 của video, tiếp tuyến tại điểm uốn f\'\'(x)=0 có gì đặc biệt so với các tiếp tuyến tại các điểm khác trên đồ thị ạ?',
+        status: 'active',
+      });
+
+      await Comment.create({
+        materialId: firstMaterial._id,
+        authorId: teacherNam._id,
+        parentId: rootComment._id,
+        content: 'Chào em Minh! Câu hỏi rất sâu sắc. Tại điểm uốn, tiếp tuyến "cắt xuyên qua" đồ thị hàm số thay vì chỉ tiếp xúc và nằm về một phía như tại các điểm cực trị thông thường. Thầy sẽ minh họa chi tiết thêm bằng đồ thị động GeoGebra trong buổi thảo luận trên lớp ngày mai nhé!',
+        status: 'active',
+      });
+      console.log('[Seeder] Created sample 2-tier discussion thread');
+    }
+
     console.log('[Seeder] --- SEED COMPLETED SUCCESSFULLY ---');
   } catch (error) {
     console.error('[Seeder] Seed failed:', error);

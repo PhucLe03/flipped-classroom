@@ -49,6 +49,21 @@ jobs:
           fi
           npm run build
 
+      - name: Verify & Ensure Public Avatar Assets in Static Export
+        working-directory: ./client
+        run: |
+          echo "Ensuring public/avatars assets are copied to out/avatars..."
+          mkdir -p out/avatars
+          cp -r public/avatars/* out/avatars/
+          touch out/.nojekyll
+          
+          AVATAR_COUNT=$(ls -1 out/avatars/*.svg 2>/dev/null | wc -l)
+          echo "Successfully verified $AVATAR_COUNT SVG avatars in client/out/avatars/"
+          if [ "$AVATAR_COUNT" -eq 0 ]; then
+            echo "::error title=Avatar Assets Missing::No avatar SVGs found in client/out/avatars/"
+            exit 1
+          fi
+
       - name: Upload GitHub Pages Artifact
         if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
