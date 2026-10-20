@@ -1,0 +1,43 @@
+name: Backend Keep-Alive Cron
+
+on:
+  schedule:
+    # Chạy hàng ngày vào lúc 06:00 sáng theo giờ Việt Nam (23:00 UTC hôm trước)
+    # Ghi chú: Nếu muốn giữ backend luôn thức trong giờ cao điểm ban ngày,
+    # có thể đổi sang: '*/14 1-17 * * *' (mỗi 14 phút từ 08:00 đến 24:00 giờ VN)
+    - cron: '0 23 * * *'
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: 'URL backend cần ping kiểm tra (để trống sẽ dùng mặc định)'
+        required: false
+        default: 'https://flipped-classroom.onrender.com/api/health'
+
+jobs:
+  ping-backend:
+    name: Ping & Keep Backend Alive
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Run Keep-Alive Ping
+        working-directory: ./server
+        env:
+          TARGET_URL: ${{ github.event.inputs.target_url || secrets.BACKEND_API_URL || 'https://flipped-classroom.onrender.com/api/health' }}
+        run: |
+          echo "🚀 Starting Backend Keep-Alive Ping..."
+          npx --yes tsx scripts/keep-alive.ts "$TARGET_URL"
+
+      - name: Add Job Summary
+        if: always()
+        run: |
+          echo "### 📡 Kết Quả Keep-Alive Ping Backend" >> $GITHUB_STEP_SUMMARY
+          echo "- **Thời gian thực thi:** $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Trạng thái:** ${{ job.status == 'success' && '✅ Thành công' || '❌ Thất bại' }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mục tiêu:** \`${{ github.event.inputs.target_url || secrets.BACKEND_API_URL || 'https://flipped-classroom.onrender.com/api/health' }}\`" >> $GITHUB_STEP_SUMMARY

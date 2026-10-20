@@ -115,11 +115,24 @@ export function getAvatarPreset(value?: string | null): AvatarPreset | null {
 
 /**
  * Lấy đường dẫn URL của file SVG avatar từ thư mục public/avatars/.
- * Tự động hỗ trợ biến môi trường NEXT_PUBLIC_BASE_PATH khi deploy GitHub Pages.
+ * Tự động hỗ trợ linh hoạt cả Custom Domain (/avatars/<id>.svg)
+ * lẫn trường hợp deploy subpath (/flipped-classroom/avatars/<id>.svg).
  */
 export function getAvatarUrl(value?: string | null): string | null {
   const id = cleanAvatarId(value);
   if (!id) return null;
-  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
+  let basePath = (process.env.NEXT_PUBLIC_BASE_PATH || '').replace(/\/+$/, '');
+
+  // Nếu đang chạy trên trình duyệt (client-side):
+  // Nếu basePath được cấu hình (ví dụ '/flipped-classroom') nhưng pathname thực tế
+  // không bắt đầu bằng basePath (ví dụ truy cập qua Custom Domain hoặc localhost),
+  // tự động bỏ basePath để tải trực tiếp từ root `/avatars/<id>.svg`.
+  if (typeof window !== 'undefined' && basePath) {
+    if (!window.location.pathname.startsWith(basePath)) {
+      basePath = '';
+    }
+  }
+
   return `${basePath}/avatars/${id}.svg`;
 }

@@ -20,6 +20,21 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ avatar, name, size = 40,
   const avatarUrl = getAvatarUrl(avatar);
   const initial = name?.trim().charAt(0).toUpperCase() || 'U';
 
+  // Luôn reset imgError khi avatar thay đổi
+  React.useEffect(() => {
+    setImgError(false);
+  }, [avatar, avatarUrl]);
+
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = e.currentTarget;
+    // Fallback nếu ảnh tải thất bại do tiền tố subpath (ví dụ trên custom domain)
+    if (target.src && target.src.includes('/flipped-classroom/avatars/')) {
+      target.src = target.src.replace('/flipped-classroom/avatars/', '/avatars/');
+      return;
+    }
+    setImgError(true);
+  };
+
   // 1. Nếu avatar là ID trong danh sách (lấy file từ public/avatars/<id>.svg)
   if (avatarUrl && !imgError) {
     return (
@@ -29,7 +44,7 @@ export const UserAvatar: React.FC<UserAvatarProps> = ({ avatar, name, size = 40,
         title={preset?.label || name}
         width={size}
         height={size}
-        onError={() => setImgError(true)}
+        onError={handleImageError}
         className={`inline-block shrink-0 rounded-full object-cover shadow-sm ring-2 ring-white/80 select-none ${className}`}
         style={{ width: size, height: size }}
       />

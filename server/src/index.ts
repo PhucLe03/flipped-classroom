@@ -3,6 +3,7 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
+import mongoose from 'mongoose';
 import { connectDB } from './config/db';
 import { seedData } from './seeder';
 import { errorHandler } from './middlewares/errorHandler';
@@ -57,7 +58,14 @@ app.use(async (req, res, next) => {
 
 // Routes
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', service: 'Flipped Classroom API', time: new Date() });
+  const isDbConnected = mongoose.connection.readyState === 1;
+  res.json({
+    status: 'ok',
+    service: 'Flipped Classroom API',
+    uptime: Math.floor(process.uptime()),
+    database: isDbConnected ? 'connected' : 'disconnected',
+    timestamp: new Date().toISOString(),
+  });
 });
 
 app.use('/api/auth', authRoutes);

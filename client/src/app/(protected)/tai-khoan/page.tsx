@@ -290,6 +290,12 @@ function ProfileEditor() {
                             alt={preset.label}
                             className="h-full w-full object-contain drop-shadow-md select-none pointer-events-none"
                             loading="lazy"
+                            onError={(e) => {
+                              const target = e.currentTarget;
+                              if (target.src && target.src.includes('/flipped-classroom/avatars/')) {
+                                target.src = target.src.replace('/flipped-classroom/avatars/', '/avatars/');
+                              }
+                            }}
                           />
                         </div>
                         <span className={`text-[11px] sm:text-xs font-semibold text-center leading-tight ${selected ? 'text-brand-blue font-bold' : 'text-slate-600'}`}>

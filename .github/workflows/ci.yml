@@ -39,7 +39,7 @@ jobs:
         working-directory: ./client
         env:
           GITHUB_PAGES: 'true'
-          NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH || vars.NEXT_PUBLIC_BASE_PATH || '/flipped-classroom' }}
+          NEXT_PUBLIC_BASE_PATH: ${{ secrets.NEXT_PUBLIC_BASE_PATH || vars.NEXT_PUBLIC_BASE_PATH || '' }}
           NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || vars.NEXT_PUBLIC_API_URL }}
         run: |
           if [ -z "$NEXT_PUBLIC_API_URL" ]; then
