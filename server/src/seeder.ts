@@ -6,28 +6,67 @@ import { StudyMaterial } from './models/StudyMaterial';
 import { Comment } from './models/Comment';
 import { extractYouTubeId, extractGDriveId, generateSlug } from './utils/parsers';
 import { hashPasswordForStorage } from './utils/crypto';
+import { connectDB, getDbInfo, isConnectedToLocalDb, isProductionRuntime } from './config/db';
 
 dotenv.config();
 
-const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/flipped_classroom';
+/**
+ * Luôn đảm bảo tài khoản Super Admin hailua112003@gmail.com tồn tại (không phá huỷ dữ liệu).
+ */
+export const ensureSuperAdmin = async (): Promise<void> => {
+  const existingAdmin = await User.findOne({ email: 'hailua112003@gmail.com' });
+  if (!existingAdmin) {
+    const adminPasswordHash = await hashPasswordForStorage('Admin@123456', 'hailua112003@gmail.com');
+    await User.create({
+      fullName: 'Quản Trị Viên (Super Admin)',
+      email: 'hailua112003@gmail.com',
+      passwordHash: adminPasswordHash,
+      role: 'admin',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      bio: 'Quản trị viên tối cao nền tảng Học Liệu Số Flipped Classroom',
+      isActive: true,
+    });
+    console.log('[Seeder] Super Admin hailua112003@gmail.com created successfully.');
+  }
+};
+
+/**
+ * Có tự động seed dữ liệu mẫu khi server khởi động hay không.
+ * - AUTO_SEED=true  : luôn bật
+ * - AUTO_SEED=false : luôn tắt
+ * - Mặc định       : chỉ bật khi KHÔNG ở production VÀ đang dùng DB local/in-memory
+ */
+export const shouldAutoSeed = (): boolean => {
+  if (process.env.AUTO_SEED === 'true') return true;
+  if (process.env.AUTO_SEED === 'false') return false;
+  return !isProductionRuntime() && isConnectedToLocalDb();
+};
+
+/**
+ * Chặn thao tác xoá dữ liệu (forceClear) trên DB remote/production.
+ * Chỉ cho phép khi đang kết nối DB local/in-memory, hoặc ép bằng ALLOW_DESTRUCTIVE_SEED=true.
+ */
+const assertDestructiveSeedAllowed = (): void => {
+  if (process.env.ALLOW_DESTRUCTIVE_SEED === 'true') {
+    console.warn('[Seeder] ⚠️ ALLOW_DESTRUCTIVE_SEED=true — bỏ qua cơ chế bảo vệ dữ liệu!');
+    return;
+  }
+  const info = getDbInfo();
+  if (isProductionRuntime() || !isConnectedToLocalDb()) {
+    throw new Error(
+      `[Seeder] TỪ CHỐI forceClear trên database ${info.mode} (${info.host}/${info.name}). ` +
+        'Chỉ được xoá dữ liệu trên MongoDB local/in-memory. Đặt ALLOW_DESTRUCTIVE_SEED=true nếu thực sự muốn.'
+    );
+  }
+};
 
 export const seedData = async (forceClear = false): Promise<void> => {
   try {
-    // Luôn đảm bảo tài khoản Super Admin hailua112003@gmail.com tồn tại
-    const existingAdmin = await User.findOne({ email: 'hailua112003@gmail.com' });
-    if (!existingAdmin) {
-      const adminPasswordHash = await hashPasswordForStorage('Admin@123456', 'hailua112003@gmail.com');
-      await User.create({
-        fullName: 'Quản Trị Viên (Super Admin)',
-        email: 'hailua112003@gmail.com',
-        passwordHash: adminPasswordHash,
-        role: 'admin',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
-        bio: 'Quản trị viên tối cao nền tảng Học Liệu Số Flipped Classroom',
-        isActive: true,
-      });
-      console.log('[Seeder] Super Admin hailua112003@gmail.com created successfully.');
+    if (forceClear) {
+      assertDestructiveSeedAllowed();
     }
+
+    await ensureSuperAdmin();
 
     const userCount = await User.countDocuments();
     if (!forceClear && userCount > 1) {
@@ -328,14 +367,7 @@ if (require.main === module) {
   (async () => {
     try {
       console.log('[Seeder CLI] Connecting to MongoDB...');
-      try {
-        await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 3000 });
-      } catch (connErr) {
-        console.warn('[Seeder CLI] Local MongoDB not detected, starting in-memory MongoDB...');
-        const { MongoMemoryServer } = await import('mongodb-memory-server');
-        const mongod = await MongoMemoryServer.create();
-        await mongoose.connect(mongod.getUri());
-      }
+      await connectDB();
       console.log('[Seeder CLI] Connected');
       await seedData(true);
       await mongoose.disconnect();

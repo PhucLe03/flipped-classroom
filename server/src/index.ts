@@ -3,9 +3,8 @@ import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
-import mongoose from 'mongoose';
-import { connectDB } from './config/db';
-import { seedData } from './seeder';
+import { connectDB, getDbInfo } from './config/db';
+import { ensureSuperAdmin, seedData, shouldAutoSeed } from './seeder';
 import { errorHandler } from './middlewares/errorHandler';
 
 import authRoutes from './routes/authRoutes';
@@ -47,23 +46,33 @@ app.use(morgan('dev'));
 
 // Serverless DB Connection Middleware
 app.use(async (req, res, next) => {
+  if (req.path === '/api/health') return next();
   try {
     await connectDB();
     next();
   } catch (err) {
     console.error('[Server] DB middleware connection error:', err);
-    next();
+    res.status(503).json({ message: 'Database tạm thời không khả dụng. Vui lòng thử lại sau.' });
   }
 });
 
 // Routes
 app.get('/api/health', (req, res) => {
-  const isDbConnected = mongoose.connection.readyState === 1;
+  const db = getDbInfo();
   res.json({
     status: 'ok',
     service: 'Flipped Classroom API',
     uptime: Math.floor(process.uptime()),
-    database: isDbConnected ? 'connected' : 'disconnected',
+    database: db.connected ? 'connected' : 'disconnected',
+    databaseInfo: {
+      mode: db.mode, // remote | local | memory | disconnected
+      host: db.host,
+      name: db.name,
+      persistent: db.persistent,
+    },
+    ...(db.mode === 'memory' && {
+      warning: 'Đang dùng in-memory MongoDB — dữ liệu sẽ mất khi server restart!',
+    }),
     timestamp: new Date().toISOString(),
   });
 });
@@ -80,13 +89,21 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await connectDB();
-    await seedData(false);
+    await ensureSuperAdmin();
+
+    if (shouldAutoSeed()) {
+      await seedData(false);
+    } else {
+      console.log('[Server] Auto-seed disabled (production/remote DB). Set AUTO_SEED=true to force.');
+    }
 
     app.listen(PORT, () => {
       console.log(`[Server] Flipped Classroom Backend running on http://localhost:${PORT}`);
     });
   } catch (err) {
     console.error('[Server] Startup error:', err);
+    // Thoát với mã lỗi để Render/PM2 đánh dấu deploy thất bại thay vì chạy âm thầm không có DB
+    process.exit(1);
   }
 };
 
