@@ -5,7 +5,7 @@ on:
     # Chạy hàng ngày vào lúc 06:00 sáng theo giờ Việt Nam (23:00 UTC hôm trước)
     # Ghi chú: Nếu muốn giữ backend luôn thức trong giờ cao điểm ban ngày,
     # có thể đổi sang: '*/14 1-17 * * *' (mỗi 14 phút từ 08:00 đến 24:00 giờ VN)
-    - cron: '0 23 * * *'
+    - cron: '*/15 * * * *'
   workflow_dispatch:
     inputs:
       target_url:
