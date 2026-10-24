@@ -1,5 +1,18 @@
-import dotenv from 'dotenv';
-dotenv.config();
+// Tự động load file .env nếu có (hỗ trợ môi trường local, không bắt buộc cài đặt package khi chạy trên CI)
+if (typeof (process as any).loadEnvFile === 'function') {
+  try {
+    (process as any).loadEnvFile();
+  } catch {
+    // Không có file .env hoặc đang chạy trong CI/CD, bỏ qua
+  }
+} else {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    require('dotenv')?.config?.();
+  } catch {
+    // Không có thư viện dotenv, bỏ qua
+  }
+}
 
 interface HealthResponse {
   status?: string;

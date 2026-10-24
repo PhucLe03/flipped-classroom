@@ -29,7 +29,7 @@ jobs:
       - name: Run Keep-Alive Ping
         working-directory: ./server
         env:
-          TARGET_URL: ${{ github.event.inputs.target_url || secrets.BACKEND_API_URL || 'https://flipped-classroom.onrender.com/api/health' }}
+          TARGET_URL: ${{ github.event.inputs.target_url || secrets.BACKEND_API_URL || vars.BACKEND_API_URL || secrets.NEXT_PUBLIC_API_URL || vars.NEXT_PUBLIC_API_URL || 'https://flipped-classroom.onrender.com/api/health' }}
         run: |
           echo "🚀 Starting Backend Keep-Alive Ping..."
           npx --yes tsx scripts/keep-alive.ts "$TARGET_URL"
@@ -40,4 +40,4 @@ jobs:
           echo "### 📡 Kết Quả Keep-Alive Ping Backend" >> $GITHUB_STEP_SUMMARY
           echo "- **Thời gian thực thi:** $(date -u)" >> $GITHUB_STEP_SUMMARY
           echo "- **Trạng thái:** ${{ job.status == 'success' && '✅ Thành công' || '❌ Thất bại' }}" >> $GITHUB_STEP_SUMMARY
-          echo "- **Mục tiêu:** \`${{ github.event.inputs.target_url || secrets.BACKEND_API_URL || 'https://flipped-classroom.onrender.com/api/health' }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Mục tiêu:** \`${{ github.event.inputs.target_url || secrets.BACKEND_API_URL || vars.BACKEND_API_URL || secrets.NEXT_PUBLIC_API_URL || vars.NEXT_PUBLIC_API_URL || 'https://flipped-classroom.onrender.com/api/health' }}\`" >> $GITHUB_STEP_SUMMARY
