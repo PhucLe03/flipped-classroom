@@ -44,7 +44,7 @@ export const getCommentsByMaterial = async (
         ...c,
         id: c._id.toString(),
         author: c.authorId,
-        content: c.status === 'deleted' ? 'Bình luận này đã bị xóa bởi người dùng hoặc quản trị viên.' : c.content,
+        content: c.status === 'deleted' ? 'Bình luận này đã được xóa bởi người gửi.' : c.content,
       };
 
       if (!c.parentId) {
@@ -196,7 +196,7 @@ export const replyToComment = async (
 };
 
 /**
- * Xóa/Ẩn bình luận (Tác giả, Giáo viên hoặc Quản trị viên)
+ * Xóa/Ẩn bình luận (Chỉ duy nhất tác giả mới có quyền xóa)
  */
 export const deleteComment = async (
   req: AuthRequest,
@@ -218,11 +218,9 @@ export const deleteComment = async (
     }
 
     const isAuthor = comment.authorId.toString() === req.user._id.toString();
-    const isAdmin = req.user.role === 'admin';
-    const isTeacher = req.user.role === 'teacher';
 
-    if (!isAuthor && !isAdmin && !isTeacher) {
-      res.status(403).json({ success: false, message: 'Bạn không có quyền xóa bình luận này' });
+    if (!isAuthor) {
+      res.status(403).json({ success: false, message: 'Chỉ chính tác giả mới có quyền xóa bình luận này' });
       return;
     }
 

@@ -31,10 +31,22 @@ export const DiscussionSection: React.FC<DiscussionSectionProps> = ({ materialId
   const [submittingRoot, setSubmittingRoot] = useState<boolean>(false);
   const [newCommentText, setNewCommentText] = useState<string>('');
   const [replyingToId, setReplyingToId] = useState<string | null>(null);
-  const [replyText, setReplyText] = useState<string>('');
+  const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
   const [submittingReplyId, setSubmittingReplyId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const isCommentAuthor = (currentUser: any, authorObj: any): boolean => {
+    if (!currentUser || !authorObj) return false;
+    const currentUserId = currentUser.id || currentUser._id;
+    const authorUserId = typeof authorObj === 'string' ? authorObj : (authorObj.id || authorObj._id);
+    return Boolean(currentUserId && authorUserId && String(currentUserId) === String(authorUserId));
+  };
+
+  const getReplyContent = (commentId: string) => replyTexts[commentId] || '';
+  const setReplyContent = (commentId: string, text: string) => {
+    setReplyTexts((prev) => ({ ...prev, [commentId]: text }));
+  };
 
   const fetchComments = async () => {
     try {
@@ -77,13 +89,14 @@ export const DiscussionSection: React.FC<DiscussionSectionProps> = ({ materialId
   };
 
   const handlePostReply = async (commentId: string) => {
-    if (!replyText.trim()) return;
+    const text = getReplyContent(commentId).trim();
+    if (!text) return;
 
     setSubmittingReplyId(commentId);
     setErrorMessage('');
     try {
       const res = await api.post<ApiResponse<CommentItem>>(`/comments/${commentId}/reply`, {
-        content: replyText.trim(),
+        content: text,
       });
       if (res.data.success && res.data.data) {
         // Cập nhật câu trả lời vào comment cấp 1 tương ứng
@@ -98,7 +111,11 @@ export const DiscussionSection: React.FC<DiscussionSectionProps> = ({ materialId
             return c;
           })
         );
-        setReplyText('');
+        setReplyTexts((prev) => {
+          const next = { ...prev };
+          delete next[commentId];
+          return next;
+        });
         setReplyingToId(null);
       }
     } catch (err: any) {
@@ -266,12 +283,13 @@ export const DiscussionSection: React.FC<DiscussionSectionProps> = ({ materialId
         <div className="space-y-6">
           {comments.map((rootComment) => {
             const author = (rootComment.author || rootComment.authorId) as User;
-            const isRootAuthor = user?.id === author?.id || (user as any)?._id === author?.id;
-            const canDeleteRoot = isRootAuthor || user?.role === 'admin' || user?.role === 'teacher';
+            const canDeleteRoot = isCommentAuthor(user, author);
+            const hasReplies = Boolean(rootComment.replies && rootComment.replies.length > 0);
+            const rootId = rootComment.id || rootComment._id!;
 
             return (
               <div
-                key={rootComment.id || rootComment._id}
+                key={rootId}
                 className="rounded-2xl border border-slate-200/90 bg-white p-5 sm:p-6 shadow-xs transition-all hover:border-slate-300"
               >
                 {/* Root Comment Header */}
@@ -295,8 +313,8 @@ export const DiscussionSection: React.FC<DiscussionSectionProps> = ({ materialId
                   {canDeleteRoot && rootComment.status !== 'deleted' && (
                     <button
                       type="button"
-                      onClick={() => handleDeleteComment(rootComment.id || rootComment._id!)}
-                      disabled={deletingId === (rootComment.id || rootComment._id)}
+                      onClick={() => handleDeleteComment(rootId)}
+                      disabled={deletingId === rootId}
                       className="rounded-lg p-1 text-slate-400 hover:text-red-500 transition-colors"
                       title="Xóa bình luận"
                     >
@@ -316,36 +334,50 @@ export const DiscussionSection: React.FC<DiscussionSectionProps> = ({ materialId
                     <button
                       type="button"
                       onClick={() => {
-                        const targetId = rootComment.id || rootComment._id!;
-                        setReplyingToId(replyingToId === targetId ? null : targetId);
-                        setReplyText('');
+                        if (hasReplies) {
+                          // Nếu đã có phản hồi, focus vào ô nhập trả lời cố định bên dưới
+                          const inputEl = document.getElementById(`reply-input-${rootId}`) as HTMLTextAreaElement | null;
+                          if (inputEl) {
+                            inputEl.focus();
+                            inputEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                          }
+                        } else {
+                          // Nếu chưa có phản hồi nào, toggle form mở ra như cũ
+                          setReplyingToId(replyingToId === rootId ? null : rootId);
+                        }
                       }}
                       className="inline-flex items-center gap-1 font-bold text-brand-blue hover:text-brand-blue-dark transition-colors"
                     >
                       <CornerDownRight className="h-3.5 w-3.5" />
-                      <span>{replyingToId === (rootComment.id || rootComment._id) ? 'Đóng' : 'Trả lời'}</span>
+                      <span>{!hasReplies && replyingToId === rootId ? 'Đóng' : 'Trả lời'}</span>
                     </button>
                   )}
 
-                  {rootComment.replies && rootComment.replies.length > 0 && (
+                  {hasReplies && (
                     <span className="text-slate-400 font-medium">
-                      • {rootComment.replies.length} phản hồi
+                      • {rootComment.replies!.length} phản hồi
                     </span>
                   )}
                 </div>
 
-                {/* Reply Form (Cấp 2 Box) */}
-                {replyingToId === (rootComment.id || rootComment._id) && user && (
+                {/* TRƯỜNG HỢP 1: Chưa có câu trả lời nào -> UI hiện như cũ (Toggle form) */}
+                {!hasReplies && replyingToId === rootId && user && (
                   <div className="mt-4 ml-8 sm:ml-12 rounded-xl bg-slate-50 border border-slate-200 p-3.5 space-y-2">
                     <span className="text-xs font-bold text-slate-700">
                       Trả lời {author?.fullName || 'bình luận'}:
                     </span>
                     <textarea
                       rows={2}
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
+                      value={getReplyContent(rootId)}
+                      onChange={(e) => setReplyContent(rootId, e.target.value)}
                       placeholder="Nhập nội dung phản hồi của bạn..."
                       className="w-full rounded-lg border border-slate-300 bg-white p-2.5 text-xs sm:text-sm text-slate-800 focus:border-brand-blue focus:outline-none focus:ring-1 focus:ring-brand-blue"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                          e.preventDefault();
+                          handlePostReply(rootId);
+                        }
+                      }}
                     />
                     <div className="flex justify-end gap-2">
                       <button
@@ -357,13 +389,13 @@ export const DiscussionSection: React.FC<DiscussionSectionProps> = ({ materialId
                       </button>
                       <button
                         type="button"
-                        onClick={() => handlePostReply(rootComment.id || rootComment._id!)}
+                        onClick={() => handlePostReply(rootId)}
                         disabled={
-                          submittingReplyId === (rootComment.id || rootComment._id) || !replyText.trim()
+                          submittingReplyId === rootId || !getReplyContent(rootId).trim()
                         }
                         className="inline-flex items-center gap-1.5 rounded-lg bg-brand-blue px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-brand-blue-dark disabled:opacity-50"
                       >
-                        {submittingReplyId === (rootComment.id || rootComment._id) ? (
+                        {submittingReplyId === rootId ? (
                           <Loader2 className="h-3 w-3 animate-spin" />
                         ) : (
                           <Send className="h-3 w-3" />
@@ -374,13 +406,12 @@ export const DiscussionSection: React.FC<DiscussionSectionProps> = ({ materialId
                   </div>
                 )}
 
-                {/* Nested Thread (Cấp 2 Replies) */}
-                {rootComment.replies && rootComment.replies.length > 0 && (
+                {/* TRƯỜNG HỢP 2: Đã từng có câu trả lời -> Danh sách phản hồi + Ô "trả lời" neo ngay bên dưới */}
+                {hasReplies && (
                   <div className="mt-4 ml-6 sm:ml-12 space-y-3 border-l-2 border-brand-blue/30 pl-4 sm:pl-5">
-                    {rootComment.replies.map((reply) => {
+                    {rootComment.replies!.map((reply) => {
                       const replyAuthor = (reply.author || reply.authorId) as User;
-                      const isReplyAuthor = user?.id === replyAuthor?.id || (user as any)?._id === replyAuthor?.id;
-                      const canDeleteReply = isReplyAuthor || user?.role === 'admin' || user?.role === 'teacher';
+                      const canDeleteReply = isCommentAuthor(user, replyAuthor);
 
                       return (
                         <div
@@ -404,7 +435,7 @@ export const DiscussionSection: React.FC<DiscussionSectionProps> = ({ materialId
                                 type="button"
                                 onClick={() => handleDeleteComment(reply.id || reply._id!)}
                                 disabled={deletingId === (reply.id || reply._id)}
-                                className="rounded p-1 text-slate-400 hover:text-red-500"
+                                className="rounded p-1 text-slate-400 hover:text-red-500 transition-colors"
                                 title="Xóa câu trả lời"
                               >
                                 <Trash2 className="h-3.5 w-3.5" />
@@ -418,6 +449,72 @@ export const DiscussionSection: React.FC<DiscussionSectionProps> = ({ materialId
                         </div>
                       );
                     })}
+
+                    {/* Ô "Trả lời" bình luận hiển thị ngay dưới các câu trả lời */}
+                    {user ? (
+                      <div className="mt-3.5 rounded-xl bg-slate-50/90 border border-slate-200/90 p-3 sm:p-3.5 shadow-2xs transition-all focus-within:border-brand-blue/50 focus-within:ring-2 focus-within:ring-brand-blue/10">
+                        <div className="flex items-start gap-2.5">
+                          <UserAvatar avatar={user.avatar} name={user.fullName} size={30} />
+                          <div className="flex-1 space-y-2">
+                            <textarea
+                              id={`reply-input-${rootId}`}
+                              rows={2}
+                              value={getReplyContent(rootId)}
+                              onChange={(e) => setReplyContent(rootId, e.target.value)}
+                              placeholder={`Trả lời thảo luận của ${author?.fullName || 'bài học'}...`}
+                              className="w-full rounded-lg border border-slate-300 bg-white p-2.5 text-xs sm:text-sm text-slate-800 placeholder:text-slate-400 focus:border-brand-blue focus:outline-none transition-all leading-relaxed"
+                              onKeyDown={(e) => {
+                                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                                  e.preventDefault();
+                                  handlePostReply(rootId);
+                                }
+                              }}
+                            />
+                            <div className="flex items-center justify-between">
+                              <span className="text-[11px] text-slate-400 hidden sm:inline">
+                                Nhấn <kbd className="px-1 py-0.5 bg-slate-100 border border-slate-300 rounded text-[10px]">Ctrl+Enter</kbd> để gửi nhanh
+                              </span>
+                              <div className="flex items-center gap-2 ml-auto">
+                                {getReplyContent(rootId).trim() && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setReplyContent(rootId, '')}
+                                    className="rounded-lg px-2.5 py-1 text-xs font-semibold text-slate-500 hover:bg-slate-200 transition-colors"
+                                  >
+                                    Xóa
+                                  </button>
+                                )}
+                                <button
+                                  type="button"
+                                  onClick={() => handlePostReply(rootId)}
+                                  disabled={submittingReplyId === rootId || !getReplyContent(rootId).trim()}
+                                  className="inline-flex items-center gap-1.5 rounded-lg bg-brand-blue px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-brand-blue-dark active:scale-95 disabled:opacity-50 transition-all"
+                                >
+                                  {submittingReplyId === rootId ? (
+                                    <>
+                                      <Loader2 className="h-3 w-3 animate-spin" />
+                                      <span>Đang gửi...</span>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Send className="h-3 w-3" />
+                                      <span>Gửi phản hồi</span>
+                                    </>
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="mt-3 rounded-xl bg-slate-50/80 border border-dashed border-slate-300 p-3 text-center text-xs text-slate-600">
+                        <a href="/dang-nhap" className="font-bold text-brand-blue hover:underline">
+                          Đăng nhập
+                        </a>{' '}
+                        để tham gia trả lời thảo luận này.
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

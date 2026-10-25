@@ -1,11 +1,19 @@
-name: Backend Keep-Alive Cron
+# LƯU Ý: Cron schedule của GitHub Actions thường xuyên bị trễ (delay từ 15-45+ phút)
+# do hàng đợi quá tải vào giờ cao điểm, dẫn đến việc Render instance (ngủ sau 15 phút không có request) bị sleep.
+# 
+# Giải pháp: Lịch ping tự động định kỳ đã được chuyển sang External Cron Executor:
+# 👉 Dịch vụ: cron-job.org (https://cron-job.org)
+# 👉 Endpoint: https://flipped-classroom.onrender.com/api/health
+# 👉 Tần suất khuyến nghị: Mỗi 10 phút (Execution schedule: Every 10 minutes)
+#
+# Workflow này được giữ lại với trigger 'workflow_dispatch' để dev có thể bấm chạy thủ công
+# từ giao diện GitHub Actions bất cứ khi nào cần kiểm tra hoặc đánh thức backend tức thì.
+
+name: Backend Keep-Alive (Manual & Fallback)
 
 on:
-  schedule:
-    # Chạy hàng ngày vào lúc 06:00 sáng theo giờ Việt Nam (23:00 UTC hôm trước)
-    # Ghi chú: Nếu muốn giữ backend luôn thức trong giờ cao điểm ban ngày,
-    # có thể đổi sang: '*/14 1-17 * * *' (mỗi 14 phút từ 08:00 đến 24:00 giờ VN)
-    - cron: '*/15 * * * *'
+  # schedule:
+  #   - cron: '*/15 * * * *' # Đã tắt do delay từ GitHub Actions runners
   workflow_dispatch:
     inputs:
       target_url:
