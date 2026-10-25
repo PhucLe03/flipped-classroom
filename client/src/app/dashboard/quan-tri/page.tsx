@@ -24,7 +24,47 @@ import {
   Mail,
   X,
   Pencil,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
 } from 'lucide-react';
+
+function getPaginationItems(current: number, total: number): (number | '...')[] {
+  if (total <= 1) return [1];
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+
+  let left = Math.max(2, current - 1);
+  let right = Math.min(total - 1, current + 1);
+
+  if (current <= 2) {
+    left = 2;
+    right = 3;
+  } else if (current >= total - 1) {
+    left = total - 2;
+    right = total - 1;
+  }
+
+  const items: (number | '...')[] = [1];
+
+  if (left > 2) {
+    items.push('...');
+  }
+
+  for (let i = left; i <= right; i++) {
+    items.push(i);
+  }
+
+  if (right < total - 1) {
+    items.push('...');
+  }
+
+  items.push(total);
+
+  return items;
+}
 
 export default function AdminDashboardPage() {
   const [activeTab, setActiveTab] = useState<'users' | 'categories' | 'materials'>('users');
@@ -33,7 +73,12 @@ export default function AdminDashboardPage() {
   const [stats, setStats] = useState<any>(null);
   const [loadingStats, setLoadingStats] = useState(true);
 
-  // Users Tab
+  // Users Tab Sub-Tabs & Pagination State
+  const [userRoleSubTab, setUserRoleSubTab] = useState<'student' | 'teacher' | 'admin'>('student');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(10);
+  const [totalUserRecords, setTotalUserRecords] = useState<number>(0);
+  const [totalUserPages, setTotalUserPages] = useState<number>(1);
   const [users, setUsers] = useState<User[]>([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
@@ -79,13 +124,21 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Load users
-  const fetchUsers = async () => {
+  // Load users with sub-tab filtering and pagination
+  const fetchUsers = async (
+    role: 'student' | 'teacher' | 'admin' = userRoleSubTab,
+    page: number = currentPage,
+    limit: number = pageSize
+  ) => {
     setLoadingUsers(true);
     try {
-      const res = await api.get<ApiResponse<User[]>>('/admin/users');
+      const res = await api.get<any>(`/admin/users?role=${role}&page=${page}&limit=${limit}`);
       if (res.data.success && res.data.data) {
         setUsers(res.data.data);
+        if (res.data.pagination) {
+          setTotalUserRecords(res.data.pagination.total ?? res.data.data.length);
+          setTotalUserPages(res.data.pagination.totalPages ?? 1);
+        }
       }
     } catch (err) {
       console.error('Error fetching users:', err);
@@ -126,21 +179,40 @@ export default function AdminDashboardPage() {
 
   useEffect(() => {
     fetchStats();
-    fetchUsers();
     fetchCategories();
     fetchMaterials();
   }, []);
 
-  // Listen for ESC to close edit user modal
+  useEffect(() => {
+    if (activeTab === 'users') {
+      fetchUsers(userRoleSubTab, currentPage, pageSize);
+    }
+  }, [activeTab, userRoleSubTab, currentPage, pageSize]);
+
+  // Listen for ESC to close modals
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && editingUser) {
-        handleCloseEditModal();
+      if (e.key === 'Escape') {
+        if (editingUser) handleCloseEditModal();
+        if (showAddUserModal) {
+          setShowAddUserModal(false);
+          setUserError('');
+        }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [editingUser]);
+  }, [editingUser, showAddUserModal]);
+
+  const handleSubTabChange = (role: 'student' | 'teacher' | 'admin') => {
+    setUserRoleSubTab(role);
+    setCurrentPage(1);
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPageSize(newSize);
+    setCurrentPage(1);
+  };
 
   // Edit User Modal Handlers
   const handleOpenEditModal = (u: User) => {
@@ -178,15 +250,19 @@ export default function AdminDashboardPage() {
 
       if (res.data.success && res.data.data) {
         const updated = res.data.data;
-        setUsers((prev) =>
-          prev.map((item) =>
-            (item.id === userId || (item as any)._id === userId) ? { ...item, ...updated } : item
-          )
-        );
         setUserSuccess(`Cập nhật tài khoản "${updated.fullName}" thành công!`);
         setTimeout(() => setUserSuccess(''), 4000);
         handleCloseEditModal();
         await fetchStats();
+        if (updated.role !== userRoleSubTab) {
+          await fetchUsers(userRoleSubTab, currentPage, pageSize);
+        } else {
+          setUsers((prev) =>
+            prev.map((item) =>
+              (item.id === userId || (item as any)._id === userId) ? { ...item, ...updated } : item
+            )
+          );
+        }
       }
     } catch (err: any) {
       setEditError(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật tài khoản');
@@ -200,7 +276,7 @@ export default function AdminDashboardPage() {
     setActionLoading(userId);
     try {
       await api.patch(`/admin/users/${userId}/role`, { role: newRole });
-      await fetchUsers();
+      await fetchUsers(userRoleSubTab, currentPage, pageSize);
       await fetchStats();
     } catch (err) {
       console.error('Failed to change user role:', err);
@@ -213,7 +289,7 @@ export default function AdminDashboardPage() {
     setActionLoading(userId);
     try {
       await api.patch(`/admin/users/${userId}/status`);
-      await fetchUsers();
+      await fetchUsers(userRoleSubTab, currentPage, pageSize);
     } catch (err) {
       console.error('Failed to toggle user status:', err);
     } finally {
@@ -259,10 +335,16 @@ export default function AdminDashboardPage() {
         setNewUserName('');
         setNewUserEmail('');
         setNewUserPassword('');
-        setNewUserRole('student');
         setShowAddUserModal(false);
-        await fetchUsers();
+        setUserError('');
+        setTimeout(() => setUserSuccess(''), 4000);
         await fetchStats();
+        if (newUserRole === userRoleSubTab) {
+          await fetchUsers(userRoleSubTab, currentPage, pageSize);
+        } else {
+          setUserRoleSubTab(newUserRole);
+          setCurrentPage(1);
+        }
       } else {
         setUserError(res.data.message || 'Lỗi khi tạo tài khoản');
       }
@@ -285,7 +367,15 @@ export default function AdminDashboardPage() {
     setActionLoading(userId);
     try {
       await api.delete(`/admin/users/${userId}`);
-      await fetchUsers();
+      setUserSuccess(`Đã xóa vĩnh viễn tài khoản "${name}".`);
+      setTimeout(() => setUserSuccess(''), 4000);
+      const remainingOnPage = users.length - 1;
+      let targetPage = currentPage;
+      if (remainingOnPage === 0 && currentPage > 1) {
+        targetPage = currentPage - 1;
+        setCurrentPage(targetPage);
+      }
+      await fetchUsers(userRoleSubTab, targetPage, pageSize);
       await fetchStats();
     } catch (err: any) {
       alert(err.response?.data?.message || 'Lỗi khi xóa người dùng');
@@ -406,7 +496,7 @@ export default function AdminDashboardPage() {
               }`}
             >
               <Users className="h-4.5 w-4.5" />
-              <span>Quản lý Người dùng ({users.length})</span>
+              <span>Quản lý Người dùng ({stats?.totalUsers ?? users.length})</span>
             </button>
             <button
               type="button"
@@ -450,14 +540,17 @@ export default function AdminDashboardPage() {
                 <button
                   type="button"
                   onClick={() => {
-                    setShowAddUserModal(!showAddUserModal);
+                    setNewUserName('');
+                    setNewUserEmail('');
+                    setNewUserPassword('');
+                    setNewUserRole(userRoleSubTab);
                     setUserError('');
-                    setUserSuccess('');
+                    setShowAddUserModal(true);
                   }}
-                  className="inline-flex items-center gap-2 rounded-xl bg-brand-blue px-4 py-2.5 text-sm font-bold text-white shadow-xs hover:bg-brand-blue-dark transition-all shrink-0"
+                  className="inline-flex items-center gap-2 rounded-xl bg-brand-blue px-4 py-2.5 text-sm font-bold text-white shadow-xs hover:bg-brand-blue-dark active:scale-95 transition-all shrink-0"
                 >
                   <UserPlus className="h-4.5 w-4.5" />
-                  <span>{showAddUserModal ? 'Đóng biểu mẫu' : 'Cấp tài khoản Gmail mới'}</span>
+                  <span>Tạo người dùng mới</span>
                 </button>
               </div>
 
@@ -475,106 +568,73 @@ export default function AdminDashboardPage() {
                 </div>
               )}
 
-              {/* Create User Form Panel */}
-              {showAddUserModal && (
-                <form
-                  onSubmit={handleCreateUser}
-                  className="rounded-3xl border border-blue-200 bg-blue-50/40 p-6 sm:p-7 shadow-sm space-y-4"
+              {/* 3 Sub-Tabs: Học sinh / Giáo viên / Quản trị viên */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => handleSubTabChange('student')}
+                  className={`inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold transition-all ${
+                    userRoleSubTab === 'student'
+                      ? 'bg-brand-blue text-white shadow-sm'
+                      : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
+                  }`}
                 >
-                  <div className="flex items-center justify-between border-b border-blue-100 pb-3">
-                    <div className="flex items-center gap-2 text-brand-blue font-bold text-base">
-                      <UserPlus className="h-5 w-5" />
-                      <span>Cấp tài khoản Gmail mới</span>
-                    </div>
-                    <span className="text-xs text-slate-500">Mật khẩu được băm SHA-256 + Bcrypt an toàn</span>
-                  </div>
+                  <span>🎒 Học sinh</span>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-extrabold ${
+                      userRoleSubTab === 'student'
+                        ? 'bg-white/20 text-white'
+                        : 'bg-slate-100 text-slate-700'
+                    }`}
+                  >
+                    {stats?.totalStudents ?? 0}
+                  </span>
+                </button>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Họ và tên người dùng <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Ví dụ: Trần Văn Nam"
-                        value={newUserName}
-                        onChange={(e) => setNewUserName(e.target.value)}
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-brand-blue"
-                      />
-                    </div>
+                <button
+                  type="button"
+                  onClick={() => handleSubTabChange('teacher')}
+                  className={`inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold transition-all ${
+                    userRoleSubTab === 'teacher'
+                      ? 'bg-brand-blue text-white shadow-sm'
+                      : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
+                  }`}
+                >
+                  <span>👨‍🏫 Giáo viên</span>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-extrabold ${
+                      userRoleSubTab === 'teacher'
+                        ? 'bg-white/20 text-white'
+                        : 'bg-slate-100 text-slate-700'
+                    }`}
+                  >
+                    {stats?.totalTeachers ?? 0}
+                  </span>
+                </button>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Địa chỉ Gmail <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="email"
-                        required
-                        placeholder="tennguoidung@gmail.com"
-                        value={newUserEmail}
-                        onChange={(e) => setNewUserEmail(e.target.value)}
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-brand-blue"
-                      />
-                    </div>
+                <button
+                  type="button"
+                  onClick={() => handleSubTabChange('admin')}
+                  className={`inline-flex items-center gap-2 rounded-2xl px-4 py-2.5 text-sm font-bold transition-all ${
+                    userRoleSubTab === 'admin'
+                      ? 'bg-brand-blue text-white shadow-sm'
+                      : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
+                  }`}
+                >
+                  <span>👑 Quản trị viên</span>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-extrabold ${
+                      userRoleSubTab === 'admin'
+                        ? 'bg-white/20 text-white'
+                        : 'bg-slate-100 text-slate-700'
+                    }`}
+                  >
+                    {stats?.totalAdmins ?? 0}
+                  </span>
+                </button>
+              </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Mật khẩu khởi tạo <span className="text-red-500">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="Tối thiểu 6 ký tự"
-                        value={newUserPassword}
-                        onChange={(e) => setNewUserPassword(e.target.value)}
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-brand-blue font-mono"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-bold text-slate-700 mb-1">
-                        Phân quyền vai trò <span className="text-red-500">*</span>
-                      </label>
-                      <select
-                        value={newUserRole}
-                        onChange={(e) => setNewUserRole(e.target.value as any)}
-                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:outline-none focus:border-brand-blue font-semibold"
-                      >
-                        <option value="student">Học sinh</option>
-                        <option value="teacher">Giáo viên</option>
-                        <option value="admin">Quản trị viên</option>
-                      </select>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-end gap-2.5 pt-2">
-                    <button
-                      type="button"
-                      onClick={() => setShowAddUserModal(false)}
-                      className="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50"
-                    >
-                      Hủy bỏ
-                    </button>
-                    <button
-                      type="submit"
-                      disabled={actionLoading === 'create-user'}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-brand-yellow px-5 py-2 text-sm font-bold text-slate-950 shadow-xs hover:bg-brand-yellow-hover disabled:opacity-50"
-                    >
-                      {actionLoading === 'create-user' ? (
-                        <>
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span>Đang tạo tài khoản...</span>
-                        </>
-                      ) : (
-                        <span>Lưu & Cấp tài khoản</span>
-                      )}
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {/* Users Table */}
+              {/* Users Table Card */}
               <div className="rounded-3xl border border-slate-200 bg-white shadow-xs overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm text-slate-700">
@@ -588,79 +648,238 @@ export default function AdminDashboardPage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                      {users.map((u) => {
-                        const isSuperAdmin = u.email === 'hailua112003@gmail.com';
-                        const userId = u.id || (u as any)._id;
+                      {loadingUsers ? (
+                        <tr>
+                          <td colSpan={5} className="py-12 text-center text-slate-500">
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <Loader2 className="h-6 w-6 animate-spin text-brand-blue" />
+                              <span className="text-sm font-medium">Đang tải danh sách người dùng...</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : users.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="py-12 text-center text-slate-500">
+                            <div className="flex flex-col items-center justify-center gap-2">
+                              <Users className="h-8 w-8 text-slate-300" />
+                              <p className="text-sm font-semibold text-slate-600">
+                                Không tìm thấy người dùng nào thuộc nhóm này
+                              </p>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setNewUserName('');
+                                  setNewUserEmail('');
+                                  setNewUserPassword('');
+                                  setNewUserRole(userRoleSubTab);
+                                  setUserError('');
+                                  setShowAddUserModal(true);
+                                }}
+                                className="mt-1 text-xs font-bold text-brand-blue hover:underline"
+                              >
+                                + Tạo tài khoản mới ngay
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ) : (
+                        users.map((u) => {
+                          const isSuperAdmin = u.email === 'hailua112003@gmail.com';
+                          const userId = u.id || (u as any)._id;
 
-                        return (
-                          <tr key={userId} className="hover:bg-slate-50/60 transition-colors">
-                            <td className="px-5 py-4 font-bold text-slate-900 text-sm sm:text-base">
-                              <div className="flex items-center gap-2">
-                                <span>{u.fullName}</span>
-                                {isSuperAdmin && (
-                                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold text-amber-900">
-                                    Super Admin
+                          return (
+                            <tr key={userId} className="hover:bg-slate-50/60 transition-colors">
+                              <td className="px-5 py-4 font-bold text-slate-900 text-sm sm:text-base">
+                                <div className="flex items-center gap-2">
+                                  <span>{u.fullName}</span>
+                                  {isSuperAdmin && (
+                                    <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-extrabold text-amber-900">
+                                      Super Admin
+                                    </span>
+                                  )}
+                                </div>
+                              </td>
+                              <td className="px-4 py-4 text-slate-600 font-mono text-xs sm:text-sm">
+                                {u.email}
+                              </td>
+                              <td className="px-4 py-4">
+                                {u.role === 'admin' ? (
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-red-50 border border-red-200/80 px-2.5 py-1 text-xs font-extrabold text-red-700">
+                                    👑 Quản trị viên
+                                  </span>
+                                ) : u.role === 'teacher' ? (
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200/80 px-2.5 py-1 text-xs font-bold text-amber-800">
+                                    👨‍🏫 Giáo viên
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 border border-sky-200/80 px-2.5 py-1 text-xs font-semibold text-brand-blue">
+                                    🎒 Học sinh
                                   </span>
                                 )}
-                              </div>
-                            </td>
-                            <td className="px-4 py-4 text-slate-600 font-mono text-xs sm:text-sm">
-                              {u.email}
-                            </td>
-                            <td className="px-4 py-4">
-                              {u.role === 'admin' ? (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-red-50 border border-red-200/80 px-2.5 py-1 text-xs font-extrabold text-red-700">
-                                  👑 Quản trị viên
-                                </span>
-                              ) : u.role === 'teacher' ? (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200/80 px-2.5 py-1 text-xs font-bold text-amber-800">
-                                  👨‍🏫 Giáo viên
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 border border-sky-200/80 px-2.5 py-1 text-xs font-semibold text-brand-blue">
-                                  🎒 Học sinh
-                                </span>
-                              )}
-                            </td>
-                            <td className="px-4 py-4">
-                              <span
-                                className={`rounded-full px-3 py-1 text-xs font-bold ${
-                                  (u as any).isActive !== false
-                                    ? 'bg-emerald-50 text-emerald-700'
-                                    : 'bg-red-50 text-red-700'
-                                }`}
-                              >
-                                {(u as any).isActive !== false ? 'Hoạt động' : 'Đã khóa'}
-                              </span>
-                            </td>
-                            <td className="px-5 py-4 text-right">
-                              <div className="flex items-center justify-end gap-1.5">
-                                <button
-                                  type="button"
-                                  onClick={() => handleOpenEditModal(u)}
-                                  className="rounded-lg p-1.5 text-slate-500 hover:bg-sky-50 hover:text-brand-blue transition-colors"
-                                  title="Chỉnh sửa thông tin tài khoản"
+                              </td>
+                              <td className="px-4 py-4">
+                                <span
+                                  className={`rounded-full px-3 py-1 text-xs font-bold ${
+                                    (u as any).isActive !== false
+                                      ? 'bg-emerald-50 text-emerald-700'
+                                      : 'bg-red-50 text-red-700'
+                                  }`}
                                 >
-                                  <Pencil className="h-4 w-4" />
-                                </button>
-                                {!isSuperAdmin && (
+                                  {(u as any).isActive !== false ? 'Hoạt động' : 'Đã khóa'}
+                                </span>
+                              </td>
+                              <td className="px-5 py-4 text-right">
+                                <div className="flex items-center justify-end gap-1.5">
                                   <button
                                     type="button"
-                                    onClick={() => handleDeleteUser(userId, u.email, u.fullName)}
-                                    disabled={actionLoading === userId}
-                                    className="rounded-lg p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors"
-                                    title="Xóa tài khoản này"
+                                    onClick={() => handleOpenEditModal(u)}
+                                    className="rounded-lg p-1.5 text-slate-500 hover:bg-sky-50 hover:text-brand-blue transition-colors"
+                                    title="Chỉnh sửa thông tin tài khoản"
                                   >
-                                    <Trash2 className="h-4 w-4" />
+                                    <Pencil className="h-4 w-4" />
                                   </button>
-                                )}
-                              </div>
-                            </td>
-                          </tr>
-                        );
-                      })}
+                                  {!isSuperAdmin && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDeleteUser(userId, u.email, u.fullName)}
+                                      disabled={actionLoading === userId}
+                                      className="rounded-lg p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors"
+                                      title="Xóa tài khoản này"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                    </button>
+                                  )}
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
+                      )}
                     </tbody>
                   </table>
+                </div>
+
+                {/* Pagination Toolbar */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t border-slate-100 bg-slate-50/50 px-5 py-4">
+                  {/* Left: Record summary & Page Size Selector */}
+                  <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm">
+                    <span className="text-slate-500 font-medium">
+                      {totalUserRecords > 0 ? (
+                        <>
+                          Hiển thị{' '}
+                          <span className="font-bold text-slate-800">
+                            {(currentPage - 1) * pageSize + 1}
+                          </span>{' '}
+                          -{' '}
+                          <span className="font-bold text-slate-800">
+                            {Math.min(currentPage * pageSize, totalUserRecords)}
+                          </span>{' '}
+                          trên tổng số{' '}
+                          <span className="font-bold text-slate-800">{totalUserRecords}</span>{' '}
+                          người dùng
+                        </>
+                      ) : (
+                        'Không có người dùng nào'
+                      )}
+                    </span>
+
+                    <div className="flex items-center gap-1.5 text-slate-600">
+                      <span className="text-xs">Hiển thị</span>
+                      <select
+                        value={pageSize}
+                        onChange={(e) => handlePageSizeChange(Number(e.target.value))}
+                        className="rounded-lg border border-slate-300 bg-white px-2.5 py-1 text-xs font-semibold text-slate-800 focus:outline-none focus:border-brand-blue"
+                      >
+                        <option value={10}>10</option>
+                        <option value={20}>20</option>
+                        <option value={50}>50</option>
+                        <option value={100}>100</option>
+                      </select>
+                      <span className="text-xs">/ trang</span>
+                    </div>
+                  </div>
+
+                  {/* Right: Pagination Controls */}
+                  {totalUserPages > 1 && (
+                    <div className="flex items-center gap-1">
+                      {/* First Page << */}
+                      <button
+                        type="button"
+                        onClick={() => setCurrentPage(1)}
+                        disabled={currentPage === 1 || loadingUsers}
+                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        title="Trang đầu tiên"
+                      >
+                        <ChevronsLeft className="h-4 w-4" />
+                      </button>
+
+                      {/* Previous Page < */}
+                      <button
+                        type="button"
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={currentPage === 1 || loadingUsers}
+                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        title="Trang trước"
+                      >
+                        <ChevronLeft className="h-4 w-4" />
+                      </button>
+
+                      {/* Page Numbers */}
+                      <div className="flex items-center gap-1 px-1">
+                        {getPaginationItems(currentPage, totalUserPages).map((item, idx) => {
+                          if (item === '...') {
+                            return (
+                              <span
+                                key={`ellipsis-${idx}`}
+                                className="flex h-9 w-9 items-center justify-center text-slate-400 font-bold select-none cursor-default"
+                              >
+                                ...
+                              </span>
+                            );
+                          }
+                          const pageNumber = item as number;
+                          const isCurrent = pageNumber === currentPage;
+                          return (
+                            <button
+                              key={`page-${pageNumber}`}
+                              type="button"
+                              onClick={() => setCurrentPage(pageNumber)}
+                              disabled={loadingUsers}
+                              className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold transition-all ${
+                                isCurrent
+                                  ? 'bg-brand-blue text-white shadow-xs'
+                                  : 'text-slate-700 hover:bg-slate-200/70'
+                              }`}
+                            >
+                              {pageNumber}
+                            </button>
+                          );
+                        })}
+                      </div>
+
+                      {/* Next Page > */}
+                      <button
+                        type="button"
+                        onClick={() => setCurrentPage((p) => Math.min(totalUserPages, p + 1))}
+                        disabled={currentPage === totalUserPages || loadingUsers}
+                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        title="Trang tiếp theo"
+                      >
+                        <ChevronRight className="h-4 w-4" />
+                      </button>
+
+                      {/* Last Page >> */}
+                      <button
+                        type="button"
+                        onClick={() => setCurrentPage(totalUserPages)}
+                        disabled={currentPage === totalUserPages || loadingUsers}
+                        className="flex h-9 w-9 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                        title="Trang cuối cùng"
+                      >
+                        <ChevronsRight className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -954,6 +1173,160 @@ export default function AdminDashboardPage() {
                         </>
                       ) : (
                         <span>Lưu thay đổi</span>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Add User Modal */}
+          {showAddUserModal && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-200"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) {
+                  setShowAddUserModal(false);
+                  setUserError('');
+                }
+              }}
+            >
+              <div className="relative w-full max-w-lg rounded-3xl border border-white/70 bg-white p-6 sm:p-8 shadow-2xl space-y-6">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue">
+                      <UserPlus className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        Tạo Người Dùng Mới
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        Cấp tài khoản đăng nhập qua Gmail cho Học sinh, Giáo viên hoặc Quản trị viên
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAddUserModal(false);
+                      setUserError('');
+                    }}
+                    className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                    title="Đóng modal"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {/* Modal Error Alert */}
+                {userError && (
+                  <div className="flex items-center gap-2 rounded-2xl bg-red-50 border border-red-200 p-3.5 text-xs sm:text-sm font-medium text-red-700">
+                    <XCircle className="h-4.5 w-4.5 text-red-500 shrink-0" />
+                    <span>{userError}</span>
+                  </div>
+                )}
+
+                {/* Modal Form */}
+                <form onSubmit={handleCreateUser} className="space-y-4">
+                  {/* Name Field */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Họ và tên người dùng <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Ví dụ: Trần Văn Nam"
+                      value={newUserName}
+                      onChange={(e) => setNewUserName(e.target.value)}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 transition-all"
+                    />
+                  </div>
+
+                  {/* Gmail Field */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Địa chỉ Gmail <span className="text-red-500">*</span>
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="email"
+                        required
+                        placeholder="tennguoidung@gmail.com"
+                        value={newUserEmail}
+                        onChange={(e) => setNewUserEmail(e.target.value)}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 font-mono transition-all"
+                      />
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                        <Mail className="h-4 w-4" />
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Địa chỉ bắt buộc phải có đuôi <code className="text-slate-600 font-semibold">@gmail.com</code> để xác thực tài khoản.
+                    </p>
+                  </div>
+
+                  {/* Password Field */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Mật khẩu khởi tạo <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="Tối thiểu 6 ký tự"
+                      value={newUserPassword}
+                      onChange={(e) => setNewUserPassword(e.target.value)}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 font-mono transition-all"
+                    />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Mật khẩu được băm an toàn SHA-256 phía client trước khi truyền về server.
+                    </p>
+                  </div>
+
+                  {/* Role Field */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Phân quyền vai trò <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      value={newUserRole}
+                      onChange={(e) => setNewUserRole(e.target.value as any)}
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 transition-all"
+                    >
+                      <option value="student">🎒 Học sinh</option>
+                      <option value="teacher">👨‍🏫 Giáo viên</option>
+                      <option value="admin">👑 Quản trị viên</option>
+                    </select>
+                  </div>
+
+                  {/* Modal Actions */}
+                  <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 mt-6">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowAddUserModal(false);
+                        setUserError('');
+                      }}
+                      className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      Đóng
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={actionLoading === 'create-user'}
+                      className="inline-flex items-center gap-2 rounded-xl bg-brand-blue px-5 py-2.5 text-sm font-bold text-white shadow-xs hover:bg-brand-blue-dark active:scale-95 disabled:opacity-50 transition-all"
+                    >
+                      {actionLoading === 'create-user' ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Đang tạo tài khoản...</span>
+                        </>
+                      ) : (
+                        <span>Lưu & Tạo người dùng</span>
                       )}
                     </button>
                   </div>

@@ -14,6 +14,7 @@ export const getPlatformStats = async (
       totalUsers,
       totalTeachers,
       totalStudents,
+      totalAdmins,
       totalMaterials,
       publishedMaterials,
       totalCategories,
@@ -22,6 +23,7 @@ export const getPlatformStats = async (
       User.countDocuments(),
       User.countDocuments({ role: 'teacher' }),
       User.countDocuments({ role: 'student' }),
+      User.countDocuments({ role: 'admin' }),
       StudyMaterial.countDocuments(),
       StudyMaterial.countDocuments({ status: 'published' }),
       Category.countDocuments({ isActive: true }),
@@ -34,6 +36,7 @@ export const getPlatformStats = async (
         totalUsers,
         totalTeachers,
         totalStudents,
+        totalAdmins,
         totalMaterials,
         publishedMaterials,
         draftMaterials: totalMaterials - publishedMaterials,
@@ -52,9 +55,9 @@ export const getUsers = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { role, q, page = '1', limit = '20' } = req.query;
+    const { role, q, page = '1', limit = '10' } = req.query;
     const pageNum = Math.max(1, parseInt(page as string, 10) || 1);
-    const limitNum = Math.max(1, Math.min(100, parseInt(limit as string, 10) || 20));
+    const limitNum = Math.max(1, Math.min(100, parseInt(limit as string, 10) || 10));
     const skip = (pageNum - 1) * limitNum;
 
     const query: any = {};
