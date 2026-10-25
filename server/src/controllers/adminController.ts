@@ -66,7 +66,7 @@ export const getUsers = async (
       query.$or = [{ fullName: regex }, { email: regex }];
     }
 
-    const [users, total] = await Promise.all([
+    const [rawUsers, total] = await Promise.all([
       User.find(query)
         .select('-passwordHash')
         .sort({ createdAt: -1 })
@@ -76,6 +76,11 @@ export const getUsers = async (
       User.countDocuments(query),
     ]);
 
+    const users = rawUsers.map((u) => ({
+      ...u,
+      id: u._id.toString(),
+    }));
+
     res.json({
       success: true,
       data: users,
@@ -84,6 +89,77 @@ export const getUsers = async (
         limit: limitNum,
         total,
         totalPages: Math.ceil(total / limitNum),
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { fullName, role, isActive } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) {
+      res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
+      return;
+    }
+
+    const isSuperAdmin = user.email === 'hailua112003@gmail.com';
+
+    if (fullName !== undefined) {
+      if (!fullName || typeof fullName !== 'string' || !fullName.trim()) {
+        res.status(400).json({ success: false, message: 'Họ và tên không được để trống' });
+        return;
+      }
+      user.fullName = fullName.trim();
+    }
+
+    if (role !== undefined) {
+      if (!['student', 'teacher', 'admin'].includes(role)) {
+        res.status(400).json({ success: false, message: 'Vai trò không hợp lệ' });
+        return;
+      }
+      if (isSuperAdmin && role !== 'admin') {
+        res.status(400).json({
+          success: false,
+          message: 'Không thể thay đổi vai trò của Quản trị viên tối cao',
+        });
+        return;
+      }
+      user.role = role;
+    }
+
+    if (isActive !== undefined) {
+      if (isSuperAdmin && !isActive) {
+        res.status(400).json({
+          success: false,
+          message: 'Không thể khóa tài khoản của Quản trị viên tối cao',
+        });
+        return;
+      }
+      user.isActive = Boolean(isActive);
+    }
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: `Cập nhật thông tin tài khoản ${user.fullName} thành công`,
+      data: {
+        id: user._id.toString(),
+        _id: user._id,
+        fullName: user.fullName,
+        email: user.email,
+        role: user.role,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
       },
     });
   } catch (error) {

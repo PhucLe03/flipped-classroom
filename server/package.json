@@ -9,7 +9,8 @@
     "start": "node dist/index.js",
     "seed": "tsx src/seeder.ts",
     "keep-alive": "tsx scripts/keep-alive.ts",
-    "test:comments": "tsx test-comments.ts"
+    "test:comments": "tsx test-comments.ts",
+    "test:admin-edit": "tsx test-admin-edit-user.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

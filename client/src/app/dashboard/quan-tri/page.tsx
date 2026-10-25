@@ -23,6 +23,7 @@ import {
   Lock,
   Mail,
   X,
+  Pencil,
 } from 'lucide-react';
 
 export default function AdminDashboardPage() {
@@ -42,6 +43,14 @@ export default function AdminDashboardPage() {
   const [newUserRole, setNewUserRole] = useState<'student' | 'teacher' | 'admin'>('student');
   const [userError, setUserError] = useState('');
   const [userSuccess, setUserSuccess] = useState('');
+
+  // Edit User Modal State
+  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editFullName, setEditFullName] = useState('');
+  const [editRole, setEditRole] = useState<'student' | 'teacher' | 'admin'>('student');
+  const [editIsActive, setEditIsActive] = useState<boolean>(true);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState('');
 
   // Categories Tab
   const [categories, setCategories] = useState<Category[]>([]);
@@ -121,6 +130,70 @@ export default function AdminDashboardPage() {
     fetchCategories();
     fetchMaterials();
   }, []);
+
+  // Listen for ESC to close edit user modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && editingUser) {
+        handleCloseEditModal();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [editingUser]);
+
+  // Edit User Modal Handlers
+  const handleOpenEditModal = (u: User) => {
+    setEditingUser(u);
+    setEditFullName(u.fullName || '');
+    setEditRole(u.role || 'student');
+    setEditIsActive(u.isActive !== false);
+    setEditError('');
+  };
+
+  const handleCloseEditModal = () => {
+    setEditingUser(null);
+    setEditError('');
+  };
+
+  const handleUpdateUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingUser) return;
+    const userId = editingUser.id || (editingUser as any)._id;
+    if (!userId) return;
+
+    if (!editFullName.trim()) {
+      setEditError('Họ và tên không được để trống');
+      return;
+    }
+
+    setEditLoading(true);
+    setEditError('');
+    try {
+      const res = await api.put<ApiResponse<User>>(`/admin/users/${userId}`, {
+        fullName: editFullName.trim(),
+        role: editRole,
+        isActive: editIsActive,
+      });
+
+      if (res.data.success && res.data.data) {
+        const updated = res.data.data;
+        setUsers((prev) =>
+          prev.map((item) =>
+            (item.id === userId || (item as any)._id === userId) ? { ...item, ...updated } : item
+          )
+        );
+        setUserSuccess(`Cập nhật tài khoản "${updated.fullName}" thành công!`);
+        setTimeout(() => setUserSuccess(''), 4000);
+        handleCloseEditModal();
+        await fetchStats();
+      }
+    } catch (err: any) {
+      setEditError(err.response?.data?.message || 'Có lỗi xảy ra khi cập nhật tài khoản');
+    } finally {
+      setEditLoading(false);
+    }
+  };
 
   // User Actions
   const handleRoleChange = async (userId: string, newRole: string) => {
@@ -517,9 +590,10 @@ export default function AdminDashboardPage() {
                     <tbody className="divide-y divide-slate-100">
                       {users.map((u) => {
                         const isSuperAdmin = u.email === 'hailua112003@gmail.com';
+                        const userId = u.id || (u as any)._id;
 
                         return (
-                          <tr key={u.id} className="hover:bg-slate-50/60">
+                          <tr key={userId} className="hover:bg-slate-50/60 transition-colors">
                             <td className="px-5 py-4 font-bold text-slate-900 text-sm sm:text-base">
                               <div className="flex items-center gap-2">
                                 <span>{u.fullName}</span>
@@ -534,16 +608,19 @@ export default function AdminDashboardPage() {
                               {u.email}
                             </td>
                             <td className="px-4 py-4">
-                              <select
-                                value={u.role}
-                                onChange={(e) => handleRoleChange(u.id, e.target.value)}
-                                disabled={actionLoading === u.id || isSuperAdmin}
-                                className="rounded-lg border border-slate-300 py-1.5 px-3 text-xs sm:text-sm font-semibold text-slate-800 focus:outline-none disabled:opacity-60"
-                              >
-                                <option value="student">Học sinh</option>
-                                <option value="teacher">Giáo viên</option>
-                                <option value="admin">Quản trị viên</option>
-                              </select>
+                              {u.role === 'admin' ? (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-red-50 border border-red-200/80 px-2.5 py-1 text-xs font-extrabold text-red-700">
+                                  👑 Quản trị viên
+                                </span>
+                              ) : u.role === 'teacher' ? (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 border border-amber-200/80 px-2.5 py-1 text-xs font-bold text-amber-800">
+                                  👨‍🏫 Giáo viên
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 rounded-full bg-sky-50 border border-sky-200/80 px-2.5 py-1 text-xs font-semibold text-brand-blue">
+                                  🎒 Học sinh
+                                </span>
+                              )}
                             </td>
                             <td className="px-4 py-4">
                               <span
@@ -557,21 +634,21 @@ export default function AdminDashboardPage() {
                               </span>
                             </td>
                             <td className="px-5 py-4 text-right">
-                              <div className="flex items-center justify-end gap-2">
+                              <div className="flex items-center justify-end gap-1.5">
                                 <button
                                   type="button"
-                                  onClick={() => handleToggleUserStatus(u.id)}
-                                  disabled={actionLoading === u.id || isSuperAdmin}
-                                  className="text-xs sm:text-sm font-semibold text-slate-600 hover:text-slate-900 disabled:opacity-40"
+                                  onClick={() => handleOpenEditModal(u)}
+                                  className="rounded-lg p-1.5 text-slate-500 hover:bg-sky-50 hover:text-brand-blue transition-colors"
+                                  title="Chỉnh sửa thông tin tài khoản"
                                 >
-                                  {(u as any).isActive !== false ? 'Khóa' : 'Mở'}
+                                  <Pencil className="h-4 w-4" />
                                 </button>
                                 {!isSuperAdmin && (
                                   <button
                                     type="button"
-                                    onClick={() => handleDeleteUser(u.id, u.email, u.fullName)}
-                                    disabled={actionLoading === u.id}
-                                    className="rounded-lg p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700"
+                                    onClick={() => handleDeleteUser(userId, u.email, u.fullName)}
+                                    disabled={actionLoading === userId}
+                                    className="rounded-lg p-1.5 text-red-500 hover:bg-red-50 hover:text-red-700 transition-colors"
                                     title="Xóa tài khoản này"
                                   >
                                     <Trash2 className="h-4 w-4" />
@@ -725,6 +802,163 @@ export default function AdminDashboardPage() {
                   })}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {/* Edit User Modal */}
+          {editingUser && (
+            <div
+              className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4 overflow-y-auto animate-in fade-in duration-200"
+              onClick={(e) => {
+                if (e.target === e.currentTarget) handleCloseEditModal();
+              }}
+            >
+              <div className="relative w-full max-w-lg rounded-3xl border border-white/70 bg-white p-6 sm:p-8 shadow-2xl space-y-6">
+                {/* Modal Header */}
+                <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-brand-blue/10 text-brand-blue">
+                      <Pencil className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-slate-900">
+                        Chỉnh Sửa Tài Khoản Người Dùng
+                      </h3>
+                      <p className="text-xs text-slate-500">
+                        Cập nhật thông tin họ tên, vai trò và trạng thái truy cập
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleCloseEditModal}
+                    className="rounded-xl p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                    title="Đóng modal"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                {/* Modal Error Alert */}
+                {editError && (
+                  <div className="flex items-center gap-2 rounded-2xl bg-red-50 border border-red-200 p-3.5 text-xs sm:text-sm font-medium text-red-700">
+                    <XCircle className="h-4.5 w-4.5 text-red-500 shrink-0" />
+                    <span>{editError}</span>
+                  </div>
+                )}
+
+                {/* Modal Form */}
+                <form onSubmit={handleUpdateUser} className="space-y-4">
+                  {/* Name Field */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                      Họ và tên người dùng <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={editFullName}
+                      onChange={(e) => setEditFullName(e.target.value)}
+                      placeholder="Nhập họ và tên..."
+                      className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 transition-all"
+                    />
+                  </div>
+
+                  {/* Email Field (Disabled) */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="block text-xs font-bold text-slate-700">
+                        Địa chỉ Gmail
+                      </label>
+                      <span className="flex items-center gap-1 text-[11px] font-semibold text-slate-400">
+                        <Lock className="h-3 w-3" />
+                        Cố định, không thể chỉnh sửa
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <input
+                        type="email"
+                        disabled
+                        value={editingUser.email}
+                        className="w-full rounded-xl border border-slate-200 bg-slate-100/80 px-3.5 py-2.5 text-sm text-slate-500 cursor-not-allowed select-none font-mono"
+                      />
+                      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                        <Mail className="h-4 w-4" />
+                      </div>
+                    </div>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Địa chỉ Gmail dùng để định danh và đăng nhập, không được phép chỉnh sửa.
+                    </p>
+                  </div>
+
+                  {/* Role & Status Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Role Field */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Vai trò hệ thống <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        value={editRole}
+                        onChange={(e) => setEditRole(e.target.value as any)}
+                        disabled={editingUser.email === 'hailua112003@gmail.com'}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed transition-all"
+                      >
+                        <option value="student">🎒 Học sinh</option>
+                        <option value="teacher">👨‍🏫 Giáo viên</option>
+                        <option value="admin">👑 Quản trị viên</option>
+                      </select>
+                      {editingUser.email === 'hailua112003@gmail.com' && (
+                        <p className="text-[10px] text-amber-600 mt-1">Super Admin không thể đổi vai trò</p>
+                      )}
+                    </div>
+
+                    {/* Status Field */}
+                    <div>
+                      <label className="block text-xs font-bold text-slate-700 mb-1.5">
+                        Trạng thái tài khoản <span className="text-red-500">*</span>
+                      </label>
+                      <select
+                        value={editIsActive ? 'active' : 'inactive'}
+                        onChange={(e) => setEditIsActive(e.target.value === 'active')}
+                        disabled={editingUser.email === 'hailua112003@gmail.com'}
+                        className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:border-brand-blue focus:ring-2 focus:ring-brand-blue/15 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed transition-all"
+                      >
+                        <option value="active">🟢 Hoạt động (Bình thường)</option>
+                        <option value="inactive">🔴 Đã khóa (Tạm ngưng)</option>
+                      </select>
+                      {editingUser.email === 'hailua112003@gmail.com' && (
+                        <p className="text-[10px] text-amber-600 mt-1">Super Admin không thể bị khóa</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Modal Actions */}
+                  <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100 mt-6">
+                    <button
+                      type="button"
+                      onClick={handleCloseEditModal}
+                      className="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+                    >
+                      Đóng
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={editLoading}
+                      className="inline-flex items-center gap-2 rounded-xl bg-brand-blue px-5 py-2.5 text-sm font-bold text-white shadow-xs hover:bg-brand-blue-dark active:scale-95 disabled:opacity-50 transition-all"
+                    >
+                      {editLoading ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span>Đang lưu...</span>
+                        </>
+                      ) : (
+                        <span>Lưu thay đổi</span>
+                      )}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           )}
         </div>

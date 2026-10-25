@@ -3,6 +3,7 @@ import {
   getPlatformStats,
   getUsers,
   createUser,
+  updateUser,
   updateUserRole,
   toggleUserStatus,
   deleteUser,
@@ -18,6 +19,7 @@ router.use(protect, requireRole('admin'));
 router.get('/stats', getPlatformStats);
 router.get('/users', getUsers);
 router.post('/users', createUser);
+router.put('/users/:id', updateUser);
 router.patch('/users/:id/role', updateUserRole);
 router.patch('/users/:id/status', toggleUserStatus);
 router.delete('/users/:id', deleteUser);

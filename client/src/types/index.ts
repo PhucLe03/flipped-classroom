@@ -2,12 +2,14 @@ export type UserRole = 'student' | 'teacher' | 'admin';
 
 export interface User {
   id: string;
+  _id?: string;
   fullName: string;
   email: string;
   role: UserRole;
   avatar?: string;
   bio?: string;
   phone?: string;
+  isActive?: boolean;
   createdAt?: string;
 }
 
