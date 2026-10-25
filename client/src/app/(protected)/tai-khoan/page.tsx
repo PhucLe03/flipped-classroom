@@ -219,12 +219,12 @@ function ProfileEditor() {
                 </div>
               </div>
 
-              {/* Bộ chọn avatar Xbox style */}
+              {/* Bộ chọn avatar SVG style */}
               <div className="rounded-3xl border border-white/70 bg-white/92 backdrop-blur-md p-6 sm:p-7 shadow-lg">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
                   <div>
                     <h2 className="text-lg font-extrabold text-slate-900">Chọn Avatar có sẵn</h2>
-                    <p className="text-xs text-slate-500">Bộ avatar vector Xbox độc quyền, tải trực tiếp từ hệ thống</p>
+                    <p className="text-xs text-slate-500">Bộ avatar vector độc quyền, tải trực tiếp từ hệ thống</p>
                   </div>
                   {avatar && (
                     <button
